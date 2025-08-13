@@ -25,7 +25,7 @@ export function selectIntent(evt: PerceptionEventT) {
     intent: "move",
     rationale: "Advance cautiously",
     suggestedDC: suggestedDC(10),
-    candidateActions: [{ action: "move", params: { destDX: 0, destDZ: 2 } }]
+    candidateActions: [{ action: "move", params: { destDX: 0, destDZ: 5 } }]
   };
 }
 
