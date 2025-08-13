@@ -15,6 +15,9 @@ Unity
 - Open project at `unity/`, press Play
 - Or headless: `"/Applications/Unity/Hub/Editor/2022.3.62f1/Unity.app/Contents/MacOS/Unity" -projectPath "/Users/chris/Ai/Games/Adventure_God_v1.1/unity" -batchmode -nographics -quit -executeMethod HeadlessHarness.Run`
 
+Save/Load
+- In Play, use the on-screen Save/Load buttons (runtime UI) to write/read `save.json` in `Application.persistentDataPath`.
+
 ### Contracts
 See `docs/20_contracts.md` for `PerceptionEvent` and `IntentProposal`. Changes must update both ends and the docs in the same commit.
 
