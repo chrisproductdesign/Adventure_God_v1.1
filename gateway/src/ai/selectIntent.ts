@@ -12,6 +12,7 @@ export function selectIntent(evt: PerceptionEventT) {
       goal: "stay-safe",
       intent: "wait",
       rationale: "Enemy nearby, holding position",
+      suggestedDC: 12,
       candidateActions: [{ action: "idle", params: {} }]
     };
   }
@@ -22,6 +23,7 @@ export function selectIntent(evt: PerceptionEventT) {
     goal: "advance",
     intent: "move",
     rationale: "Advance cautiously",
+    suggestedDC: 10,
     candidateActions: [{ action: "move", params: { destDX: 0, destDZ: 2 } }]
   };
 }

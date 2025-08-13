@@ -33,6 +33,7 @@ These contracts are authoritative. Any change requires updating this file and bo
   "goal": "string",
   "intent": "string",
   "rationale": "string?",
+  "suggestedDC": "number?",
   "candidateActions": [
     {
       "action": "string",
