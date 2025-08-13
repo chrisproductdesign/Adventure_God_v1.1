@@ -1,0 +1,60 @@
+---
+description: DM-controlled dungeon crawl; 3 AI adventurers; Unity client + Node AI gateway over WebSocket; dice-gated actions.
+globs:
+alwaysApply: true
+---
+
+# DM & Adventurers (starter)
+- DM sets scenes/POIs, NPCs, DCs; triggers dice checks.
+- 3 AI party members: LLM proposes intent; Unity planner executes actions.
+- Outcomes gated by d20; DM defines DCs/mods.
+- Architecture: Unity ↔ Node “AI Gateway” via WebSocket.
+- Gateway must output schema-valid IntentProposal only.
+
+## Always-apply workflow rules for this repo
+
+- Read before edits: `cursor-rules.md`, `docs/10_working_rules_for_cursor.md`, `docs/20_contracts.md`, `docs/30_backlog.md`.
+- Contracts are the source of truth. If you change `gateway/src/schema/**` or Unity DTOs, update `docs/20_contracts.md` in the same commit and run `npm run check:contracts` in `gateway/`.
+- Keep diffs small; one logical change per commit; include manual test steps.
+- No secrets; no heavy packages without justification & docs.
+
+## Ground truth architecture
+
+- `gateway/` (Node 22 + TypeScript + Zod v4) exposes `ws://127.0.0.1:8787`.
+  - Receives `PerceptionEvent`, returns `IntentProposal`. LLMs live here later.
+- `unity/` (URP, Api Compatibility = .NET Framework) renders, simulates, and executes actions.
+  - `BrainClient` connects to the Gateway; planner/executor handles intents.
+
+## Public contracts (enforced)
+
+- `PerceptionEvent`: `{ type:"PerceptionEvent", actorId:string, tick?:number, observations?: [{ kind:"enemy"|"object"|"trap"|"ally"|"info", id:string, distance?:number }], world?: { poiId?:string, time?:string, threat?:string } }`
+- `IntentProposal`: `{ type:"IntentProposal", actorId:string, goal:string, intent:string, rationale?:string, candidateActions:[ { action:string, params:Record<string,unknown> } ] }`
+  - For `action:"move"`: `params = { destDX:number, destDZ:number }`.
+  - `candidateActions` must be non-empty.
+
+## Implementation guardrails
+
+- Gateway: strict TypeScript, Zod validation at the boundary; ESLint/Prettier available as `npm run lint`/`fix`.
+- Unity: use Newtonsoft.Json for DTOs; no reflection hacks; keep gameplay logic modular.
+
+## Session ritual
+
+1) Read rules → contracts → backlog.
+2) Restate plan (2–4 bullets).
+3) Make a small diff (one logical change).
+4) Show manual test steps. If contracts changed, update `docs/20_contracts.md` and run `npm run check:contracts`.
+
+## Quick manual test
+
+- Run Gateway: `npm run dev` in `gateway/` (expect: WS listening on 8787).
+- Send minimal `PerceptionEvent`: `{ "type":"PerceptionEvent", "actorId":"adv-1" }` → expect schema-valid `IntentProposal`.
+
+## Ongoing usage (keep it tight)
+
+- Always keep these pinned in any new chat: `cursor-rules.md`, `docs/10_working_rules_for_cursor.md`, `docs/20_contracts.md`.
+- Ask for one small change at a time; require a manual test plan in the message.
+- If proposing contract changes, you must:
+  - Update both Gateway and Unity implementations.
+  - Update `docs/20_contracts.md` in the same commit.
+  - Explicitly mention the contract change in the change summary.
+
