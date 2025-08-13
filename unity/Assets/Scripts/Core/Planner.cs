@@ -16,6 +16,7 @@ public class IntentProposal
     public string goal;
     public string intent;
     public string rationale;
+    public int? suggestedDC;
     public List<CandidateAction> candidateActions;
 }
 
@@ -41,9 +42,9 @@ public class Planner : MonoBehaviour
             return;
         }
 
-        // Delegate to ActionExecutor
-        var exec = _instance.GetComponent<ActionExecutor>();
-        if (exec == null) exec = _instance.gameObject.AddComponent<ActionExecutor>();
-        exec.Execute(msg, _instance.agent);
+        // Delegate through Dice/DC gate
+        var gate = _instance.GetComponent<DiceGate>();
+        if (gate == null) gate = _instance.gameObject.AddComponent<DiceGate>();
+        gate.ProcessProposal(msg, _instance.agent);
     }
 }

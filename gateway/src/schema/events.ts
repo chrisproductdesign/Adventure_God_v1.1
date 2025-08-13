@@ -30,6 +30,7 @@ export const IntentProposal = z.object({
   goal: z.string(),
   intent: z.string(),
   rationale: z.string().optional(),
+  suggestedDC: z.number().optional(),
   candidateActions: z
     .array(
       z.object({
