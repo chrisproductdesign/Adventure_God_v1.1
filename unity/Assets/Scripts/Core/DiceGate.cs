@@ -29,7 +29,11 @@ public class DiceGate : MonoBehaviour
 		}
 		int roll = RollD20();
 		bool success = roll >= currentDC;
-		Log($"[Dice] Roll d20={roll} vs DC {currentDC} → {(success ? "SUCCESS" : "FAIL")}");
+		Log("[Dice] Roll d20=" + roll + " vs DC " + currentDC + " → " + (success ? "SUCCESS" : "FAIL"));
+		OutcomeReporter.Report(proposal.actorId, success, roll, currentDC);
+		var hl = agent != null ? agent.GetComponent<AgentHighlighter>() : null;
+		if (hl == null && agent != null) hl = agent.gameObject.AddComponent<AgentHighlighter>();
+		hl?.Flash(success);
 		if (success)
 		{
 			_executor.Execute(proposal, agent);
