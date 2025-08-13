@@ -1,0 +1,35 @@
+{
+  "name": "gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "check:contracts": "bash -c 'changed=$(git diff --name-only --cached); [ -z \"$changed\" ] && changed=$(git diff --name-only HEAD); if echo \"$changed\" | grep -E \"^gateway/src/schema/\" >/dev/null; then echo \"$changed\" | grep -E \"^docs/20_contracts.md$\" >/dev/null || { echo \"Error: gateway/src/schema changed but docs/20_contracts.md not updated in this commit/stage.\"; exit 1; }; fi; echo Contracts check passed'",
+    "lint": "eslint .",
+    "fix": "eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.18.3",
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "eslint": "^9.9.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "root": true,
+  "env": { "es2020": true, "node": true },
+  "parserOptions": { "ecmaVersion": 2020, "sourceType": "module" },
+  "plugins": ["import", "prettier"],
+  "extends": ["eslint:recommended", "plugin:import/recommended", "plugin:prettier/recommended"],
+  "rules": {
+    "prettier/prettier": ["error", { "printWidth": 100 }],
+    "no-console": "off",
+    "import/no-unresolved": "off"
+  },
+  "ignorePatterns": ["dist/**"]
+}
+
+
