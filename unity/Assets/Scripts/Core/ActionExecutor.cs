@@ -20,7 +20,7 @@ public class ActionExecutor : MonoBehaviour
                 Debug.Log("[Executor] Idle/Wait action – no movement");
                 break;
             case "move":
-                ExecuteMove(first.@params, agent);
+                ExecuteMove(first.@params, agent, proposal.actorId);
                 break;
             default:
                 Debug.LogWarning($"[Executor] Unknown action '{first.action}'");
@@ -28,7 +28,7 @@ public class ActionExecutor : MonoBehaviour
         }
     }
 
-    private void ExecuteMove(Dictionary<string, object> paramBag, Transform agent)
+    private void ExecuteMove(Dictionary<string, object> paramBag, Transform agent, string actorId)
     {
         if (agent == null)
         {
@@ -51,6 +51,12 @@ public class ActionExecutor : MonoBehaviour
         {
             agent.position = dest;
             Debug.Log($"[Executor] Teleport move to {dest}");
+        }
+
+        var party = GetComponent<PartyState>();
+        if (party != null)
+        {
+            party.SyncFromTransform(string.IsNullOrEmpty(actorId) ? "adv-1" : actorId, agent);
         }
     }
 

@@ -22,7 +22,9 @@ public class IntentProposal
 
 public class Planner : MonoBehaviour
 {
-    public Transform agent;  // assign in Inspector
+    public Transform agent;  // legacy single agent
+    public Transform agent2;
+    public Transform agent3;
     private static Planner _instance;
     void Awake() { _instance = this; }
 
@@ -45,6 +47,14 @@ public class Planner : MonoBehaviour
         // Delegate through Dice/DC gate
         var gate = _instance.GetComponent<DiceGate>();
         if (gate == null) gate = _instance.gameObject.AddComponent<DiceGate>();
-        gate.ProcessProposal(msg, _instance.agent);
+        gate.ProcessProposal(msg, _instance.ResolveAgentFor(msg.actorId));
+    }
+
+    private Transform ResolveAgentFor(string actorId)
+    {
+        if (string.IsNullOrEmpty(actorId) || actorId == "adv-1") return agent;
+        if (actorId == "adv-2") return agent2 != null ? agent2 : agent;
+        if (actorId == "adv-3") return agent3 != null ? agent3 : agent;
+        return agent;
     }
 }
