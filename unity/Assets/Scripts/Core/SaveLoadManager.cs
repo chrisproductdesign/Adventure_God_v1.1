@@ -17,7 +17,7 @@ public class SaveLoadManager : MonoBehaviour
 
 	public void Save()
 	{
-		var data = new SaveData { actors = new List<ActorRecord>() };
+		var data = new SaveData { actors = new List<ActorRecord>(), dmNotes = DMNarration.GetAllNotes() };
 		foreach (var a in _party.Enumerate())
 		{
 			data.actors.Add(new ActorRecord
@@ -48,10 +48,18 @@ public class SaveLoadManager : MonoBehaviour
 			st.position = new Vector3(rec.x, rec.y, rec.z);
 			st.inventory = new List<string>(rec.inventory ?? new string[0]);
 		}
+		// Restore DM notes
+		if (data.dmNotes != null)
+		{
+			foreach (var kv in data.dmNotes)
+			{
+				DMNarration.SetLastNote(kv.Key, kv.Value);
+			}
+		}
 		Debug.Log($"[SaveLoad] Loaded {data.actors.Count} actors from {_savePath}");
 	}
 
-	class SaveData { public List<ActorRecord> actors; }
+	class SaveData { public List<ActorRecord> actors; public Dictionary<string,string> dmNotes; }
 	class ActorRecord { public string id; public float x,y,z; public int hp; public string[] inventory; }
 }
 

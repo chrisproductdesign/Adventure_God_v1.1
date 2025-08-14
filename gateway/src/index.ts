@@ -12,6 +12,11 @@ wss.on("connection", (socket: WebSocket) => {
 
       if (typeof parsed === "object" && parsed !== null && (parsed as any).type === "PerceptionEvent") {
         const evt = PerceptionEvent.parse(parsed) as PerceptionEventT;
+        // Optional: echo DM context lines for visibility in terminal
+        const info = (evt.observations ?? []).find((o) => o.kind === "info");
+        if (info?.id?.startsWith("dm:")) {
+          console.log(`[DM→GW] ${evt.actorId}: ${info.id.slice(3)}`);
+        }
         const rawProposal = selectIntent(evt);
         const reply = IntentProposalStrict.parse(rawProposal);
         socket.send(JSON.stringify(reply));

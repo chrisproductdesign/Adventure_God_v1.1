@@ -22,7 +22,7 @@ public class AgentLabel : MonoBehaviour
         var go = new GameObject("AgentLabel");
         go.transform.SetParent(canvas.transform);
         _text = go.AddComponent<Text>();
-        _text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        _text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         _text.fontSize = 14;
         _text.color = Color.white;
     }
@@ -33,7 +33,9 @@ public class AgentLabel : MonoBehaviour
         var screen = _cam.WorldToScreenPoint(target.position + Vector3.up * 1.2f);
         _text.rectTransform.anchoredPosition = screen;
         var tag = target.GetComponent<AgentTag>();
-        _text.text = tag != null ? tag.actorId : target.name;
+        var actorId = tag != null ? tag.actorId : target.name;
+        var note = DMNarration.GetLastNote(actorId);
+        _text.text = string.IsNullOrEmpty(note) ? actorId : actorId + " — " + note;
     }
 }
 

@@ -10,6 +10,7 @@ public class DiceGate : MonoBehaviour
 	private Transform _lastAgent;
 	private ActionExecutor _executor;
 	private DiceGateUI _ui;
+	private int _candidateIndex = 0;
 
 	void Awake()
 	{
@@ -23,7 +24,9 @@ public class DiceGate : MonoBehaviour
 	{
 		_lastProposal = proposal;
 		_lastAgent = agent;
-		if (proposal.suggestedDC.HasValue)
+		// Respect suggestedDC only if UI requested it
+		var uiWantsSuggested = GetComponent<DiceGateUI>() != null && typeof(DiceGateUI).GetField("_respectSuggestedDc", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) != null && (bool)typeof(DiceGateUI).GetField("_respectSuggestedDc", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(GetComponent<DiceGateUI>());
+		if (proposal.suggestedDC.HasValue && uiWantsSuggested)
 		{
 			currentDC = Mathf.Clamp(proposal.suggestedDC.Value, 5, 20);
 		}
@@ -36,12 +39,47 @@ public class DiceGate : MonoBehaviour
 		hl?.Flash(success);
 		if (success)
 		{
-			_executor.Execute(proposal, agent);
+			// If UI cycled a candidate, execute only that one
+			if (proposal.candidateActions != null && proposal.candidateActions.Count > 1)
+			{
+				var chosen = Mathf.Clamp(_candidateIndex, 0, proposal.candidateActions.Count - 1);
+				var single = new IntentProposal
+				{
+					type = proposal.type,
+					actorId = proposal.actorId,
+					goal = proposal.goal,
+					intent = proposal.intent,
+					rationale = proposal.rationale,
+					suggestedDC = proposal.suggestedDC,
+					candidateActions = new System.Collections.Generic.List<CandidateAction> { proposal.candidateActions[chosen] }
+				};
+				_executor.Execute(single, agent);
+			}
+			else
+			{
+				_executor.Execute(proposal, agent);
+			}
 		}
 		else
 		{
 			Log("[Dice] Action blocked by DC");
 		}
+	}
+
+	public void SetCandidateIndex(int idx)
+	{
+		_candidateIndex = Mathf.Max(0, idx);
+	}
+
+	// Stages a proposal without rolling; DM can later press Roll to resolve
+	public void StageProposal(IntentProposal proposal, Transform agent)
+	{
+		_lastProposal = proposal;
+		_lastAgent = agent;
+		Log("[Dice] Staged proposal for actor=" + proposal.actorId + ", intent=" + proposal.intent + ". Press Roll to resolve.");
+		var ui = GetComponent<DiceGateUI>();
+		if (ui != null) ui.SetCandidateMeta(proposal.candidateActions != null ? proposal.candidateActions.Count : 1);
+		GetComponent<DiceGateUI>()?.ResetCandidateIndex();
 	}
 
 	public void RerollLast()

@@ -41,4 +41,10 @@
 - Ask for one small change at a time; include a manual test plan in the message.
 - If proposing contract changes: update both Gateway and Unity, update `docs/20_contracts.md` in the same commit, and call it out in the change summary.
 
+- New feature area or major refactor:
+  - Start a new chat to reduce context noise and stale assumptions.
+  - Pin `cursor-rules.md`, `docs/10_working_rules_for_cursor.md`, and `docs/20_contracts.md`.
+  - Restate the plan and explicitly reference applicable rules/contracts.
+  - Re-run the session ritual and re-bootstrap the terminal (cwd, background jobs) as needed.
+
 

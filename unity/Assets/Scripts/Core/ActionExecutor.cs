@@ -19,6 +19,12 @@ public class ActionExecutor : MonoBehaviour
             case "wait":
                 Debug.Log("[Executor] Idle/Wait action – no movement");
                 break;
+				case "talk":
+					ExecuteTalk(proposal.actorId, agent);
+					break;
+				case "inspect":
+					ExecuteInspect(proposal.actorId, agent);
+					break;
             case "move":
                 ExecuteMove(first.@params, agent, proposal.actorId);
                 break;
@@ -59,6 +65,30 @@ public class ActionExecutor : MonoBehaviour
             party.SyncFromTransform(string.IsNullOrEmpty(actorId) ? "adv-1" : actorId, agent);
         }
     }
+
+	private void ExecuteTalk(string actorId, Transform agent)
+	{
+		Debug.Log($"[Executor] {actorId} talks to nearby NPC/object.");
+		var highlighter = agent != null ? agent.GetComponent<AgentHighlighter>() : null;
+		highlighter?.Flash(true);
+		var party = GetComponent<PartyState>();
+		if (party != null && agent != null)
+		{
+			party.SyncFromTransform(string.IsNullOrEmpty(actorId) ? "adv-1" : actorId, agent);
+		}
+	}
+
+	private void ExecuteInspect(string actorId, Transform agent)
+	{
+		Debug.Log($"[Executor] {actorId} inspects surroundings.");
+		var highlighter = agent != null ? agent.GetComponent<AgentHighlighter>() : null;
+		highlighter?.Flash(false);
+		var party = GetComponent<PartyState>();
+		if (party != null && agent != null)
+		{
+			party.SyncFromTransform(string.IsNullOrEmpty(actorId) ? "adv-1" : actorId, agent);
+		}
+	}
 
     private static float ReadFloat(Dictionary<string, object> bag, string key, float fallback)
     {
