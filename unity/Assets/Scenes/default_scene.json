@@ -1,0 +1,11 @@
+{
+  "pois": [
+    { "id": "poi-1", "name": "Campfire", "x": 0, "y": 0, "z": 4 },
+    { "id": "poi-2", "name": "Chest",   "x": 3, "y": 0, "z": -2 }
+  ],
+  "npcs": [
+    { "id": "npc-1", "name": "Guard",  "x": -2, "y": 0, "z": 1 }
+  ]
+}
+
+

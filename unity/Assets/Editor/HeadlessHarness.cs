@@ -17,15 +17,12 @@ public static class HeadlessHarness
 		var agent = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		agent.name = "Agent-1";
 		agent.transform.position = Vector3.zero;
-		agent.AddComponent<NavMeshAgent>();
 		var agent2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		agent2.name = "Agent-2";
 		agent2.transform.position = new Vector3(2, 0, 0);
-		agent2.AddComponent<NavMeshAgent>();
 		var agent3 = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		agent3.name = "Agent-3";
 		agent3.transform.position = new Vector3(-2, 0, 0);
-		agent3.AddComponent<NavMeshAgent>();
 		agent.AddComponent<AgentHighlighter>();
 		agent2.AddComponent<AgentHighlighter>();
 		agent3.AddComponent<AgentHighlighter>();

@@ -47,10 +47,14 @@ public class Planner : MonoBehaviour
         // Delegate through Dice/DC gate
         var gate = _instance.GetComponent<DiceGate>();
         if (gate == null) gate = _instance.gameObject.AddComponent<DiceGate>();
-        gate.ProcessProposal(msg, _instance.ResolveAgentFor(msg.actorId));
+        // Track candidate count for UI purposes
+        var agent = _instance.ResolveAgentFor(msg.actorId);
+        var ui = _instance.GetComponent<DiceGateUI>();
+        if (ui != null) ui.SetCandidateMeta(msg.candidateActions != null ? msg.candidateActions.Count : 1);
+        gate.ProcessProposal(msg, agent);
     }
 
-    private Transform ResolveAgentFor(string actorId)
+    public Transform ResolveAgentFor(string actorId)
     {
         if (string.IsNullOrEmpty(actorId) || actorId == "adv-1") return agent;
         if (actorId == "adv-2") return agent2 != null ? agent2 : agent;

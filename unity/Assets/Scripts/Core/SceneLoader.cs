@@ -42,6 +42,7 @@ public class SceneLoader : MonoBehaviour
 				var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
 				go.name = string.IsNullOrEmpty(p.name) ? (p.id ?? "poi") : p.name;
 				go.transform.position = new Vector3(p.x, p.y, p.z);
+				POIRegistry.Register(go.name, go.transform);
 			}
 		}
 		if (spec.npcs != null)

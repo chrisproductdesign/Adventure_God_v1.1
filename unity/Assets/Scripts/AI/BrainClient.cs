@@ -11,6 +11,7 @@ public class BrainClient : MonoBehaviour
 
     private ClientWebSocket _ws;
     private CancellationTokenSource _cts;
+    private readonly string[] _actors = new[] { "adv-1", "adv-2", "adv-3" };
 
     async void Start()
     {
@@ -26,15 +27,42 @@ public class BrainClient : MonoBehaviour
         catch (Exception e) { Debug.LogError(e.Message); }
     }
 
+    public bool IsConnected => _ws != null && _ws.State == WebSocketState.Open;
+
+    public async void SendDMContext(string actorId, string dmText)
+    {
+        if (!IsConnected) return;
+        try
+        {
+            string safeText = string.IsNullOrEmpty(dmText) ? "" : dmText.Replace("\"", "'");
+            string json = "{\"type\":\"PerceptionEvent\",\"actorId\":\"" + actorId + "\"" +
+                           (string.IsNullOrEmpty(safeText) ? "" : ",\"observations\":[{\"kind\":\"info\",\"id\":\"dm:" + safeText + "\"}]") +
+                           "}";
+            var buf  = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
+            await _ws.SendAsync(buf, WebSocketMessageType.Text, true, _cts.Token);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+    }
+
     private async Task SendHeartbeat()
     {
         try
         {
             while (_ws.State == WebSocketState.Open && !_cts.Token.IsCancellationRequested)
             {
-                var json = "{\"type\":\"PerceptionEvent\",\"actorId\":\"adv-1\"}";
-                var buf  = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
-                await _ws.SendAsync(buf, WebSocketMessageType.Text, true, _cts.Token);
+                foreach (var actor in _actors)
+                {
+                    var outcome = OutcomeReporter.GetLastOutcome(actor);
+                    string obs = string.IsNullOrEmpty(outcome)
+                        ? ""
+                        : ",\"observations\":[{\"kind\":\"info\",\"id\":\"outcome:" + outcome + "\"}]";
+                    var json = "{\"type\":\"PerceptionEvent\",\"actorId\":\"" + actor + "\"" + obs + "}";
+                    var buf  = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
+                    await _ws.SendAsync(buf, WebSocketMessageType.Text, true, _cts.Token);
+                }
                 await Task.Delay(2000, _cts.Token);
             }
         }
