@@ -17,6 +17,12 @@
 - **Check Unity compilation** errors in console before proceeding
 - **Use nohup for gateway**: `nohup npx ts-node src/index.ts > /tmp/gateway.log 2>&1 &`
 
+## Unity Integration (NEW)
+- **Use Unity Editor menu "Cursor/"** for scene info, validation, and component docs
+- **Run headless tests**: `./scripts/cursor_unity_integration.sh test`
+- **Check project setup**: `./scripts/cursor_unity_integration.sh check`
+- **Generate reports**: `./scripts/cursor_unity_integration.sh report`
+
 ## Architecture (Reference Only)
 - `gateway/` (Node + TypeScript + Zod) exposes `ws://127.0.0.1:8787`
 - `unity/` (URP) renders, simulates, executes actions via `BrainClient`
@@ -36,4 +42,6 @@
 - **Performance Guidelines**: `docs/50_performance_guidelines.md`
 - **Documentation Strategy**: `docs/60_documentation_strategy.md`
 - **Feature Development**: `docs/70_feature_development.md`
+- **Document Hierarchy**: `docs/80_document_hierarchy.md`
+- **Unity Integration**: `.cursor/rules/04-unity-integration.mdc`
 
