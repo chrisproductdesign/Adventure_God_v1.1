@@ -1,0 +1,49 @@
+# Adventure_God v1.1 - Current Progress & Backlog
+
+## Completed Items (v1.1 MVP)
+- ✅ Gateway: Intent selector seam, demo sender, lint configured
+- ✅ Gateway: Zod boundary, `move` param specialization
+- ✅ Unity: typed DTO parsing + `ActionExecutor`
+- ✅ Unity: Dice/DC gate with DM HUD (DC slider, roll, notes, DM input, candidate selector)
+- ✅ Unity: LocalIntentDemo for offline loop
+- ✅ Unity: Scene loader + POI registry
+- ✅ Unity: Party state + HUD
+- ✅ Unity: Save/Load party + DM notes
+- ✅ Unity: Remove NavMesh requirement; transform fallback movement for MVP
+- ✅ Docs: Contracts include suggestedDC
+- ✅ Git/GitHub: repo init and push
+- ✅ Git workflow optimization - comprehensive .gitignore and Unity Library management
+- ✅ Environment management - process management and port conflict resolution
+- ✅ Error recovery procedures - comprehensive troubleshooting guide
+- ✅ Testing strategy - comprehensive testing approach
+- ✅ Performance guidelines - frame rate targets, memory management
+- ✅ Documentation strategy - documentation maintenance and quality standards
+- ✅ Feature development workflow - branching strategy, feature flags, backward compatibility
+
+## Remaining Items (Next)
+- **Performance monitoring implementation**: Add Unity Profiler integration and gateway performance monitoring
+- **Automated testing setup**: Implement Jest for gateway and Unity Test Runner for Unity
+- **Feature flag system**: Implement runtime feature flags for experimental features
+- **Documentation automation**: Set up automated documentation generation and validation
+- **CI/CD pipeline**: Set up automated testing and deployment pipeline
+
+## Manual Test Steps (Current MVP Loop)
+1. Start Gateway: In `gateway/`: `npx ts-node src/index.ts`
+2. Send demo events: In `gateway/`: `npx ts-node scripts/send_demo.ts`
+3. Unity Play: Open `unity/` in Editor and press Play
+4. DM Workflow: Type "adv-2 dm:multi" then Send→GW, select candidate via Cand ◄/► and Roll
+5. Contract guard: If editing files under `gateway/src/schema/`, update `docs/20_contracts.md` and run `npm run check:contracts`
+
+## Quality Assurance Checklist
+Before any release or major feature completion:
+- [ ] **Git workflow**: Change count < 1000, no Unity Library files committed
+- [ ] **Environment**: No port conflicts, all processes properly managed
+- [ ] **Testing**: All unit, integration, and performance tests pass
+- [ ] **Performance**: 60 FPS maintained, memory usage < 500MB
+- [ ] **Documentation**: All changes documented, API docs updated
+- [ ] **Contracts**: Schema validation passes, contracts documented
+- [ ] **Error handling**: All error scenarios tested and handled
+description:
+globs:
+alwaysApply: false
+---
