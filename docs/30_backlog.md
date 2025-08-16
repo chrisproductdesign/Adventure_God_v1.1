@@ -10,7 +10,14 @@
 - Unity: Save/Load party + DM notes (done).
 - Unity: Remove NavMesh requirement; transform fallback movement for MVP (done).
 - Docs: Contracts include suggestedDC (done).
-- Git/GitHub: repo init and push (todo).
+- Git/GitHub: repo init and push (done).
+- **NEW**: Git workflow optimization - comprehensive .gitignore and Unity Library management (done).
+- **NEW**: Environment management - process management and port conflict resolution (done).
+- **NEW**: Error recovery procedures - comprehensive troubleshooting guide (done).
+- **NEW**: Testing strategy - comprehensive testing approach with unit, integration, performance, and UX tests (done).
+- **NEW**: Performance guidelines - frame rate targets, memory management, optimization strategies (done).
+- **NEW**: Documentation strategy - documentation maintenance and quality standards (done).
+- **NEW**: Feature development workflow - branching strategy, feature flags, backward compatibility (done).
 
 ### Manual test steps (current MVP loop)
 
@@ -30,8 +37,34 @@
 
 ### Remaining items (next)
 
-- Initialize Git and push to GitHub (with manual steps documented).
-- Small test for gateway intent selection.
-- Optional: voice input (post-MVP), NavMesh feature flag (post-MVP).
+- **Performance monitoring implementation**: Add Unity Profiler integration and gateway performance monitoring.
+- **Automated testing setup**: Implement Jest for gateway and Unity Test Runner for Unity.
+- **Feature flag system**: Implement runtime feature flags for experimental features.
+- **Documentation automation**: Set up automated documentation generation and validation.
+- **CI/CD pipeline**: Set up automated testing and deployment pipeline.
+
+### Documentation structure (current)
+
+```
+docs/
+├── 10_working_rules_for_cursor.md (updated with Git workflow, environment management, error recovery)
+├── 20_contracts.md (source of truth for Unity ↔ Gateway contracts)
+├── 30_backlog.md (this file - project progress and remaining work)
+├── 40_testing_strategy.md (NEW - comprehensive testing approach)
+├── 50_performance_guidelines.md (NEW - performance targets and optimization)
+├── 60_documentation_strategy.md (NEW - documentation maintenance and quality)
+└── 70_feature_development.md (NEW - feature development workflow)
+```
+
+### Quality assurance checklist
+
+Before any release or major feature completion:
+- [ ] **Git workflow**: Change count < 1000, no Unity Library files committed
+- [ ] **Environment**: No port conflicts, all processes properly managed
+- [ ] **Testing**: All unit, integration, and performance tests pass
+- [ ] **Performance**: 60 FPS maintained, memory usage < 500MB
+- [ ] **Documentation**: All changes documented, API docs updated
+- [ ] **Contracts**: Schema validation passes, contracts documented
+- [ ] **Error handling**: All error scenarios tested and handled
 
 

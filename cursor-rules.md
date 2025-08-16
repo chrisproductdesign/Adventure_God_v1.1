@@ -6,6 +6,27 @@
 - Gateway: strict TS + Zod at boundaries; provide `lint`/`fix` scripts.
 - Unity: DTOs via Newtonsoft.Json; no reflection hacks; modular gameplay logic.
 
+**Git & Unity Workflow (CRITICAL)**
+- Always maintain comprehensive .gitignore for Unity projects
+- Never commit Unity Library/, Temp/, Logs/, UserSettings/ folders
+- Before pushing: run `git status --porcelain | wc -l` to check change count
+- Commit frequency: after each logical feature completion, not every small change
+- If change count > 1000: investigate and clean up Unity-generated files
+
+**Environment Management (CRITICAL)**
+- Always check for existing processes: `lsof -ti:8787` before starting gateway
+- Kill conflicting processes: `lsof -ti:8787 | xargs -r kill -9`
+- Use nohup for long-running processes: `nohup npx ts-node src/index.ts > /tmp/gateway.log 2>&1 &`
+- Document background processes in session notes
+- Check Unity compilation errors in console before proceeding
+
+**Error Recovery Procedures**
+- Unity compilation errors: check console, fix syntax, restart Unity
+- Gateway errors: check TypeScript compilation, validate schemas, restart gateway
+- WebSocket issues: verify gateway is running, check firewall, restart both ends
+- State corruption: use save/load system, restart Unity if needed
+- Port conflicts: kill existing processes, restart gateway
+
 Operating ritual each session: read rules → restate plan → make small diff → show manual test.
 
 Ongoing usage (keep it tight):
