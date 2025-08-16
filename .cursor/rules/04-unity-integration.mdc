@@ -1,0 +1,153 @@
+# Unity Integration for Cursor
+
+## Unity Editor Integration
+
+### **Editor Menu Commands**
+Use Unity Editor menu "Cursor/" for these operations:
+- **Export Scene Info**: Generates `cursor_scene_info.md` with current scene details
+- **Validate Project Setup**: Checks all required components and generates validation report
+- **Setup Test Scene**: Creates clean test scene with all required components
+- **Export Component Documentation**: Generates `cursor_component_docs.md` with all component details
+
+### **Headless Testing**
+Run comprehensive Unity tests from terminal:
+```bash
+# Run Unity headless test
+./scripts/cursor_unity_integration.sh test
+
+# Check project setup
+./scripts/cursor_unity_integration.sh check
+
+# Generate project report
+./scripts/cursor_unity_integration.sh report
+```
+
+## Unity Development Workflow
+
+### **Component Development**
+When creating/modifying Unity components:
+1. **Use proper namespaces** and follow Unity conventions
+2. **Add XML documentation** for public methods and properties
+3. **Use [SerializeField] attributes** for inspector-visible fields
+4. **Implement proper error handling** with try-catch blocks
+5. **Add debug logging** for troubleshooting
+
+### **Scene Management**
+- **RuntimeBootstrap**: Automatically sets up required components in Play mode
+- **HeadlessHarness**: Provides headless testing capabilities
+- **SceneLoader**: Loads scene data from JSON files
+- **POIRegistry**: Manages Points of Interest in scenes
+
+### **UI Development**
+- **DiceGateUI**: Dynamically creates UI at runtime (no scene assets required)
+- **DMHud**: Collapsible HUD for DM notes and controls
+- **PartyHUD**: Displays party state information
+- **SaveLoadUI**: Provides save/load functionality
+
+## Unity Performance Guidelines
+
+### **Frame Rate Targets**
+- **Target**: 60 FPS minimum
+- **Acceptable**: 30 FPS during heavy operations
+- **Critical**: Never drop below 20 FPS
+
+### **Memory Management**
+- **Unity Runtime**: < 500MB total memory
+- **Save/Load Operations**: < 100MB temporary spike
+- **Scene Assets**: < 200MB loaded assets
+
+### **Optimization Techniques**
+- **Object Pooling**: For frequently created/destroyed objects
+- **Component Caching**: Cache GetComponent calls in Awake/Start
+- **Vector3 Reuse**: Avoid allocating new Vector3 in Update loops
+- **String Concatenation**: Use StringBuilder for frequent string operations
+
+## Unity Testing Strategy
+
+### **Editor Testing**
+- **Component Validation**: Check all required components exist
+- **Scene Setup**: Verify scene has all required GameObjects
+- **UI Functionality**: Test UI interactions and responses
+- **Save/Load**: Verify persistence works correctly
+
+### **Headless Testing**
+- **Automated Setup**: Create test scenes programmatically
+- **Component Testing**: Verify all components initialize correctly
+- **Integration Testing**: Test Unity ↔ Gateway communication
+- **Performance Testing**: Monitor frame rate and memory usage
+
+### **Manual Testing**
+- **DM Workflow**: Test complete DM input → AI → dice → outcome flow
+- **Agent Movement**: Verify agent movement and positioning
+- **UI Responsiveness**: Test all UI controls and feedback
+- **Error Handling**: Test error scenarios and recovery
+
+## Unity Debugging
+
+### **Common Issues**
+- **Missing Components**: Check RuntimeBootstrap setup
+- **WebSocket Errors**: Verify gateway is running on port 8787
+- **UI Not Visible**: Check Canvas setup and EventSystem
+- **Performance Issues**: Monitor Profiler and memory usage
+
+### **Debug Tools**
+- **Unity Profiler**: For performance analysis
+- **Console Logs**: Check for errors and warnings
+- **Scene Inspector**: Verify GameObject hierarchy
+- **Component Inspector**: Check component settings
+
+### **Log Analysis**
+- **Gateway Logs**: Check `logs/gateway.log` for WebSocket issues
+- **Unity Logs**: Check Unity console for errors
+- **Test Results**: Review `cursor_test_results.md` for test failures
+- **Validation Reports**: Check `cursor_validation_report.md` for setup issues
+
+## Unity Automation
+
+### **Scripts and Tools**
+- **cursor_unity_integration.sh**: Main integration script
+- **CursorIntegration.cs**: Unity Editor integration
+- **CursorHeadlessTest.cs**: Headless testing system
+- **RuntimeBootstrap.cs**: Automatic scene setup
+
+### **Automated Workflows**
+1. **Project Validation**: `./scripts/cursor_unity_integration.sh check`
+2. **Gateway Management**: `./scripts/cursor_unity_integration.sh start-gateway`
+3. **Unity Testing**: `./scripts/cursor_unity_integration.sh test`
+4. **Report Generation**: `./scripts/cursor_unity_integration.sh report`
+
+### **Continuous Integration**
+- **Pre-commit**: Run Unity tests before committing
+- **Post-commit**: Generate project reports
+- **Error Monitoring**: Track and report Unity errors
+- **Performance Monitoring**: Track frame rate and memory usage
+
+## Unity Best Practices
+
+### **Code Organization**
+- **Scripts/Core/**: Core game logic components
+- **Scripts/AI/**: AI and WebSocket communication
+- **Scripts/Editor/**: Editor-only scripts and tools
+- **Assets/Scenes/**: Scene data and configuration
+
+### **Component Design**
+- **Single Responsibility**: Each component has one clear purpose
+- **Loose Coupling**: Minimize dependencies between components
+- **Event-Driven**: Use events for component communication
+- **Serializable**: Make important data serializable for save/load
+
+### **Error Handling**
+- **Graceful Degradation**: Handle errors without crashing
+- **User Feedback**: Provide clear error messages
+- **Logging**: Log errors for debugging
+- **Recovery**: Implement error recovery mechanisms
+
+### **Performance Optimization**
+- **Profile First**: Use Profiler to identify bottlenecks
+- **Optimize Hot Paths**: Focus on frequently executed code
+- **Memory Management**: Minimize garbage collection
+- **Asset Optimization**: Compress textures and optimize meshes
+description:
+globs:
+alwaysApply: false
+---
