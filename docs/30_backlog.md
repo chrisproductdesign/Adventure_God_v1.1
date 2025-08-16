@@ -18,6 +18,7 @@
 - **NEW**: Performance guidelines - frame rate targets, memory management, optimization strategies (done).
 - **NEW**: Documentation strategy - documentation maintenance and quality standards (done).
 - **NEW**: Feature development workflow - branching strategy, feature flags, backward compatibility (done).
+- **NEW**: Documentation optimization - cursor rules optimization, document hierarchy, information consolidation (done).
 
 ### Manual test steps (current MVP loop)
 
@@ -43,17 +44,27 @@
 - **Documentation automation**: Set up automated documentation generation and validation.
 - **CI/CD pipeline**: Set up automated testing and deployment pipeline.
 
-### Documentation structure (current)
+### Documentation structure (optimized)
 
 ```
+.cursor/rules/
+├── 00-project-overview.mdc (essential workflow rules - 40 lines, always applied)
+├── 01-project-charter.mdc (vision & scope - reference)
+├── 02-contracts.mdc (technical contracts - reference)
+└── 03-backlog.mdc (current progress - reference)
+
 docs/
-├── 10_working_rules_for_cursor.md (updated with Git workflow, environment management, error recovery)
+├── 00_project_charter.md (vision & scope - READ FIRST)
+├── 10_working_rules_for_cursor.md (detailed workflow procedures - reference)
 ├── 20_contracts.md (source of truth for Unity ↔ Gateway contracts)
-├── 30_backlog.md (this file - project progress and remaining work)
-├── 40_testing_strategy.md (NEW - comprehensive testing approach)
-├── 50_performance_guidelines.md (NEW - performance targets and optimization)
-├── 60_documentation_strategy.md (NEW - documentation maintenance and quality)
-└── 70_feature_development.md (NEW - feature development workflow)
+├── 30_backlog.md (project progress and remaining work)
+├── 40_testing_strategy.md (comprehensive testing approach)
+├── 50_performance_guidelines.md (performance targets and optimization)
+├── 60_documentation_strategy.md (documentation maintenance and quality)
+├── 70_feature_development.md (feature development workflow)
+└── 80_document_hierarchy.md (NEW - document hierarchy and usage guide)
+
+cursor-rules.md (quick reference for cursor rules - pinned in every chat)
 ```
 
 ### Quality assurance checklist
@@ -66,5 +77,6 @@ Before any release or major feature completion:
 - [ ] **Documentation**: All changes documented, API docs updated
 - [ ] **Contracts**: Schema validation passes, contracts documented
 - [ ] **Error handling**: All error scenarios tested and handled
+- [ ] **Documentation hierarchy**: All documents follow the established hierarchy and cross-references are accurate
 
 

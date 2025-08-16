@@ -1,24 +1,21 @@
 ### Cursor quick rules (pin me)
 
-- Always read these before edits: `docs/10_working_rules_for_cursor.md`, `docs/20_contracts.md`, `docs/30_backlog.md`.
-- Contracts are the source of truth. If you change `gateway/src/schema/**` or Unity DTOs, you must update `docs/20_contracts.md` in the same commit and run `npm run check:contracts`.
-- Keep diffs small; one logical change per commit; include manual test steps.
-- Gateway: strict TS + Zod at boundaries; provide `lint`/`fix` scripts.
-- Unity: DTOs via Newtonsoft.Json; no reflection hacks; modular gameplay logic.
+**Essential Session Ritual (ALWAYS DO FIRST)**
+1. Read `docs/00_project_charter.md` for vision & scope
+2. Read `docs/20_contracts.md` for technical contracts  
+3. Read `docs/30_backlog.md` for current progress
+4. Restate your plan in 2-4 bullets before making edits
 
-**Git & Unity Workflow (CRITICAL)**
-- Always maintain comprehensive .gitignore for Unity projects
-- Never commit Unity Library/, Temp/, Logs/, UserSettings/ folders
-- Before pushing: run `git status --porcelain | wc -l` to check change count
-- Commit frequency: after each logical feature completion, not every small change
-- If change count > 1000: investigate and clean up Unity-generated files
+**Core Workflow Rules**
+- Keep diffs small; one logical change per commit; include manual test steps
+- Contracts are source of truth; update `docs/20_contracts.md` + run `npm run check:contracts` if changing schemas
+- No secrets; no heavy packages without justification & docs
+- Git workflow: Check change count with `git status --porcelain | wc -l` before pushing
 
 **Environment Management (CRITICAL)**
-- Always check for existing processes: `lsof -ti:8787` before starting gateway
-- Kill conflicting processes: `lsof -ti:8787 | xargs -r kill -9`
-- Use nohup for long-running processes: `nohup npx ts-node src/index.ts > /tmp/gateway.log 2>&1 &`
-- Document background processes in session notes
+- Kill port conflicts: `lsof -ti:8787 | xargs -r kill -9` before starting gateway
 - Check Unity compilation errors in console before proceeding
+- Use nohup for gateway: `nohup npx ts-node src/index.ts > /tmp/gateway.log 2>&1 &`
 
 **Error Recovery Procedures**
 - Unity compilation errors: check console, fix syntax, restart Unity
@@ -27,11 +24,31 @@
 - State corruption: use save/load system, restart Unity if needed
 - Port conflicts: kill existing processes, restart gateway
 
-Operating ritual each session: read rules → restate plan → make small diff → show manual test.
+**Architecture (Reference Only)**
+- `gateway/` (Node + TypeScript + Zod) exposes `ws://127.0.0.1:8787`
+- `unity/` (URP) renders, simulates, executes actions via `BrainClient`
+- Two contracts: `PerceptionEvent` (Unity→Gateway), `IntentProposal` (Gateway→Unity)
 
-Ongoing usage (keep it tight):
-- Keep `cursor-rules.md`, `docs/10_working_rules_for_cursor.md`, and `docs/20_contracts.md` pinned in every new chat.
-- Ask for one small change at a time; include a manual test plan in the message.
-- If proposing contract changes: update both Gateway and Unity, update `docs/20_contracts.md` in the same commit, and call it out in the change summary.
+**Quick Manual Test**
+1. Start gateway: `cd gateway && npm run dev`
+2. Send test: `npx ts-node scripts/send_demo.ts`  
+3. Unity Play: Open Unity, press Play, test DM workflow
+4. Verify: Dice rolls, candidate selection, save/load work
+
+**Reference Documents**
+- **Vision & Scope**: `docs/00_project_charter.md`
+- **Technical Contracts**: `docs/20_contracts.md`
+- **Current Progress**: `docs/30_backlog.md`
+- **Testing Strategy**: `docs/40_testing_strategy.md`
+- **Performance Guidelines**: `docs/50_performance_guidelines.md`
+- **Documentation Strategy**: `docs/60_documentation_strategy.md`
+- **Feature Development**: `docs/70_feature_development.md`
+
+**Operating ritual each session**: read rules → restate plan → make small diff → show manual test.
+
+**Ongoing usage (keep it tight)**:
+- Keep `cursor-rules.md`, `docs/10_working_rules_for_cursor.md`, and `docs/20_contracts.md` pinned in every new chat
+- Ask for one small change at a time; include a manual test plan in the message
+- If proposing contract changes: update both Gateway and Unity, update `docs/20_contracts.md` in the same commit, and call it out in the change summary
 
 
