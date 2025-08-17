@@ -21,7 +21,7 @@ Cursor handles all technical implementation:
 ### **Daily Workflow**
 1. **Review Status**: `./scripts/game_director_dashboard.sh dashboard`
 2. **Preview Build**: `./scripts/game_director_dashboard.sh preview`
-3. **Provide Feedback**: Update `docs/creative_feedback.md`
+3. **Provide Feedback**: Update `docs/creative_feedback.md` OR use chat feedback
 4. **Start Development**: `./scripts/game_director_dashboard.sh dev`
 5. **Let Cursor Implement**: Automated technical implementation
 
@@ -31,6 +31,55 @@ Cursor handles all technical implementation:
 3. **Prioritize Changes**: Mark high/medium/low priority items
 4. **Provide Context**: Explain the creative vision and reasoning
 5. **Let Cursor Execute**: Automated implementation based on feedback
+
+## 💬 Chat Feedback System (NEW)
+
+### **Direct Chat Feedback**
+You can now provide feedback directly in Cursor chat! Here's how:
+
+#### **Simple Feedback**
+Just type your feedback in chat, and I'll automatically:
+- Add it to `docs/creative_feedback.md`
+- Categorize it appropriately
+- Set priority level
+- Track it in feedback history
+
+#### **Structured Feedback**
+For more specific feedback, you can use these formats:
+
+**Visual Feedback:**
+```
+The agent cubes look too basic. They need more character and visual appeal.
+```
+
+**UI Feedback:**
+```
+The DM interface feels cluttered. The buttons are too small and hard to read.
+```
+
+**Gameplay Feedback:**
+```
+The dice rolls feel disconnected from the actions. Need better visual feedback.
+```
+
+**Content Feedback:**
+```
+Need more diverse scenes. The current environment is too plain.
+```
+
+### **Feedback Processing**
+When you provide feedback in chat, I automatically:
+1. **Categorize**: Visual, UI, Gameplay, Content, Technical
+2. **Prioritize**: High, Medium, Low based on impact
+3. **Document**: Add to `docs/creative_feedback.md` with timestamp
+4. **Track**: Maintain feedback history and status
+5. **Process**: Generate implementation plans automatically
+
+### **Feedback Status Tracking**
+- **Pending**: Items waiting for implementation
+- **In Progress**: Currently being worked on
+- **Completed**: Successfully implemented
+- **Archived**: Historical feedback for reference
 
 ## 🎨 Creative Direction Guidelines
 
@@ -127,6 +176,21 @@ Cursor handles all technical implementation:
 ./scripts/game_director_dashboard.sh feedback
 ```
 
+### **Feedback Processing Commands**
+```bash
+# Add feedback from chat
+./scripts/feedback_processor.sh add "feedback text" [category] [priority]
+
+# Mark feedback as completed
+./scripts/feedback_processor.sh complete "feedback text"
+
+# Show feedback status
+./scripts/feedback_processor.sh status
+
+# Process feedback from file
+./scripts/feedback_processor.sh process <file>
+```
+
 ### **Automated Development Commands**
 ```bash
 # Run complete automation workflow
@@ -172,19 +236,18 @@ Cursor handles all technical implementation:
 - **Prioritize**: Focus on high-impact changes first
 - **Test Thoroughly**: Play the game before providing feedback
 - **Document Decisions**: Record creative choices and reasoning
+- **Use Chat Feedback**: Provide feedback directly in Cursor chat for immediate processing
 
 ### **For Cursor Implementation**
 - **Follow Creative Direction**: Implement exactly as specified
 - **Maintain Quality**: Ensure all changes meet performance targets
 - **Test Automatically**: Run full test suite after each change
 - **Document Changes**: Update implementation plans and reports
+- **Process Feedback**: Automatically handle chat feedback and update documents
 
 ### **For Workflow Optimization**
 - **Iterate Quickly**: Short feedback and implementation cycles
 - **Automate Everything**: Minimize manual steps
 - **Track Progress**: Monitor implementation and creative alignment
 - **Communicate Clearly**: Maintain clear feedback and status reporting
-description:
-globs:
-alwaysApply: false
----
+- **Use Chat Integration**: Leverage direct chat feedback for faster iteration
