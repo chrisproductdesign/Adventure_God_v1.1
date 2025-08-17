@@ -21,7 +21,8 @@ public static class RuntimeBootstrap
 		{
 			host.AddComponent<BrainClient>();
 		}
-        host.AddComponent<DiceGate>(); // will auto-add DiceGateUI
+        host.AddComponent<DiceGate>();
+        host.AddComponent<ModernGameUI>(); // Modern Apple-inspired UI
 		host.AddComponent<DMHud>();
 
 		// Ensure three agents exist

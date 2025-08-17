@@ -9,15 +9,15 @@ public class DiceGate : MonoBehaviour
 	private IntentProposal _lastProposal;
 	private Transform _lastAgent;
 	private ActionExecutor _executor;
-	private DiceGateUI _ui;
+	private ModernGameUI _ui;
 	private int _candidateIndex = 0;
 
 	void Awake()
 	{
 		_executor = GetComponent<ActionExecutor>();
 		if (_executor == null) _executor = gameObject.AddComponent<ActionExecutor>();
-		_ui = GetComponent<DiceGateUI>();
-		if (_ui == null) _ui = gameObject.AddComponent<DiceGateUI>();
+		_ui = GetComponent<ModernGameUI>();
+		if (_ui == null) _ui = gameObject.AddComponent<ModernGameUI>();
 	}
 
 	public void ProcessProposal(IntentProposal proposal, Transform agent)
@@ -25,7 +25,7 @@ public class DiceGate : MonoBehaviour
 		_lastProposal = proposal;
 		_lastAgent = agent;
 		// Respect suggestedDC only if UI requested it
-		var uiWantsSuggested = GetComponent<DiceGateUI>() != null && typeof(DiceGateUI).GetField("_respectSuggestedDc", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) != null && (bool)typeof(DiceGateUI).GetField("_respectSuggestedDc", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(GetComponent<DiceGateUI>());
+		var uiWantsSuggested = GetComponent<ModernGameUI>() != null && typeof(ModernGameUI).GetField("_useSuggestedDc", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) != null && (bool)typeof(ModernGameUI).GetField("_useSuggestedDc", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(GetComponent<ModernGameUI>());
 		if (proposal.suggestedDC.HasValue && uiWantsSuggested)
 		{
 			currentDC = Mathf.Clamp(proposal.suggestedDC.Value, 5, 20);
@@ -77,9 +77,8 @@ public class DiceGate : MonoBehaviour
 		_lastProposal = proposal;
 		_lastAgent = agent;
 		Log("[Dice] Staged proposal for actor=" + proposal.actorId + ", intent=" + proposal.intent + ". Press Roll to resolve.");
-		var ui = GetComponent<DiceGateUI>();
-		if (ui != null) ui.SetCandidateMeta(proposal.candidateActions != null ? proposal.candidateActions.Count : 1);
-		GetComponent<DiceGateUI>()?.ResetCandidateIndex();
+		var ui = GetComponent<ModernGameUI>();
+		if (ui != null) ui.SetCandidateCount(proposal.candidateActions != null ? proposal.candidateActions.Count : 1);
 	}
 
 	public void RerollLast()

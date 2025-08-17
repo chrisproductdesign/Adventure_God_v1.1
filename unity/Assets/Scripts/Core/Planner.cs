@@ -49,8 +49,8 @@ public class Planner : MonoBehaviour
         if (gate == null) gate = _instance.gameObject.AddComponent<DiceGate>();
         // Track candidate count for UI purposes
         var agent = _instance.ResolveAgentFor(msg.actorId);
-        var ui = _instance.GetComponent<DiceGateUI>();
-        if (ui != null) ui.SetCandidateMeta(msg.candidateActions != null ? msg.candidateActions.Count : 1);
+        var ui = _instance.GetComponent<ModernGameUI>();
+        if (ui != null) ui.SetCandidateCount(msg.candidateActions != null ? msg.candidateActions.Count : 1);
         gate.ProcessProposal(msg, agent);
     }
 
