@@ -23,6 +23,13 @@
 - **Check project setup**: `./scripts/cursor_unity_integration.sh check`
 - **Generate reports**: `./scripts/cursor_unity_integration.sh report`
 
+## Game Director Workflow (NEW)
+- **Generate dashboard**: `./scripts/game_director_dashboard.sh dashboard`
+- **Preview build**: `./scripts/game_director_dashboard.sh preview`
+- **Start development**: `./scripts/game_director_dashboard.sh dev`
+- **Automated implementation**: `./scripts/automated_development.sh workflow`
+- **Creative feedback**: Update `docs/creative_feedback.md` for technical implementation
+
 ## Architecture (Reference Only)
 - `gateway/` (Node + TypeScript + Zod) exposes `ws://127.0.0.1:8787`
 - `unity/` (URP) renders, simulates, executes actions via `BrainClient`
@@ -44,4 +51,5 @@
 - **Feature Development**: `docs/70_feature_development.md`
 - **Document Hierarchy**: `docs/80_document_hierarchy.md`
 - **Unity Integration**: `.cursor/rules/04-unity-integration.mdc`
+- **Game Director Workflow**: `.cursor/rules/05-game-director-workflow.mdc`
 

@@ -1,0 +1,190 @@
+# Game Director Workflow for Cursor
+
+## 🎬 Game Director Role Definition
+
+### **Your Role as Game Director**
+You are the **creative visionary** for Adventure_God v1.1. Your focus is purely on:
+- **Creative Direction**: Visual style, gameplay feel, user experience
+- **Gameplay Balance**: Difficulty tuning, AI behavior, pacing
+- **Content Creation**: Scenes, NPCs, challenges, story elements
+- **Quality Assurance**: Playtesting, feedback, iteration
+
+### **Cursor's Role as Technical Implementer**
+Cursor handles all technical implementation:
+- **Code Development**: Unity scripts, Gateway logic, UI components
+- **Automation**: Testing, validation, deployment
+- **Performance**: Optimization, memory management, frame rate
+- **Integration**: Unity ↔ Gateway communication, data flow
+
+## 🎮 Game Director Workflow
+
+### **Daily Workflow**
+1. **Review Status**: `./scripts/game_director_dashboard.sh dashboard`
+2. **Preview Build**: `./scripts/game_director_dashboard.sh preview`
+3. **Provide Feedback**: Update `docs/creative_feedback.md`
+4. **Start Development**: `./scripts/game_director_dashboard.sh dev`
+5. **Let Cursor Implement**: Automated technical implementation
+
+### **Creative Feedback Process**
+1. **Play the Game**: Test current build in Unity
+2. **Document Issues**: Note visual, gameplay, or UX problems
+3. **Prioritize Changes**: Mark high/medium/low priority items
+4. **Provide Context**: Explain the creative vision and reasoning
+5. **Let Cursor Execute**: Automated implementation based on feedback
+
+## 🎨 Creative Direction Guidelines
+
+### **Visual Style**
+- **Art Direction**: Clean, modern UI with fantasy elements
+- **Color Palette**: Dark theme with accent colors for different actions
+- **Typography**: Clear, readable fonts for UI elements
+- **Animations**: Smooth, responsive feedback for all interactions
+
+### **Gameplay Feel**
+- **Responsiveness**: Immediate feedback for all player actions
+- **Clarity**: Clear visual indicators for game state
+- **Intuition**: UI should be self-explanatory
+- **Polish**: Professional quality throughout
+
+### **User Experience**
+- **DM Workflow**: Streamlined input → AI → dice → outcome flow
+- **Information Display**: Clear, organized presentation of game state
+- **Control Scheme**: Intuitive agent selection and manipulation
+- **Feedback Systems**: Visual and audio feedback for all actions
+
+## 🤖 Automated Implementation Process
+
+### **Feedback Processing**
+1. **Parse Creative Feedback**: Extract actionable items from `docs/creative_feedback.md`
+2. **Generate Implementation Plan**: Prioritize items by impact and complexity
+3. **Execute Technical Changes**: Implement Unity and Gateway improvements
+4. **Run Automated Tests**: Validate changes and performance
+5. **Generate Reports**: Document implementation progress
+
+### **Implementation Priorities**
+- **High Priority**: Visual improvements, UI polish, critical gameplay fixes
+- **Medium Priority**: AI enhancements, performance optimization, feature additions
+- **Low Priority**: Content creation, advanced features, future enhancements
+
+### **Quality Assurance**
+- **Automated Testing**: Run comprehensive test suite after each change
+- **Performance Monitoring**: Ensure 60 FPS and < 500MB memory usage
+- **User Experience**: Validate DM workflow usability
+- **Creative Alignment**: Verify implementation matches creative vision
+
+## 📋 Creative Feedback Template
+
+### **Visual Direction**
+```markdown
+### Visual Direction
+- **Agent Appearance**: [Describe desired agent visuals]
+- **UI Theme**: [Describe desired UI style]
+- **Environment**: [Describe desired scene aesthetics]
+- **Animations**: [Describe desired movement/effects]
+```
+
+### **Gameplay Balance**
+```markdown
+### Gameplay Balance
+- **DC Difficulty**: [Note current DC values and desired adjustments]
+- **AI Behavior**: [Note AI decision-making observations]
+- **Pacing**: [Note game flow and timing]
+- **Challenge Level**: [Note difficulty curve]
+```
+
+### **Content Ideas**
+```markdown
+### Content Ideas
+- **New Scenes**: [Describe new scene concepts]
+- **NPCs**: [Describe new character ideas]
+- **Challenges**: [Describe new gameplay challenges]
+- **Story Elements**: [Describe narrative direction]
+```
+
+### **Technical Feedback**
+```markdown
+### Technical Feedback
+- **Performance**: [Note any performance issues]
+- **Usability**: [Note UI/UX improvements needed]
+- **Bugs**: [Note any gameplay issues]
+- **Features**: [Note missing features]
+```
+
+## 🚀 Implementation Commands
+
+### **Game Director Commands**
+```bash
+# Generate project dashboard
+./scripts/game_director_dashboard.sh dashboard
+
+# Preview current build
+./scripts/game_director_dashboard.sh preview
+
+# Start development mode
+./scripts/game_director_dashboard.sh dev
+
+# Create feedback template
+./scripts/game_director_dashboard.sh feedback
+```
+
+### **Automated Development Commands**
+```bash
+# Run complete automation workflow
+./scripts/automated_development.sh workflow
+
+# Parse creative feedback
+./scripts/automated_development.sh feedback
+
+# Generate implementation plan
+./scripts/automated_development.sh plan
+
+# Run automated tests
+./scripts/automated_development.sh test
+
+# Generate development report
+./scripts/automated_development.sh report
+```
+
+## 🎯 Success Metrics
+
+### **Creative Success**
+- **Visual Appeal**: Game looks professional and polished
+- **Gameplay Feel**: Smooth, responsive, and intuitive
+- **User Experience**: DM workflow is efficient and enjoyable
+- **Content Quality**: Scenes and challenges are engaging
+
+### **Technical Success**
+- **Performance**: Maintains 60 FPS consistently
+- **Stability**: No crashes or critical bugs
+- **Automation**: Minimal manual intervention required
+- **Quality**: All automated tests pass
+
+### **Workflow Success**
+- **Efficiency**: Rapid iteration and feedback cycles
+- **Communication**: Clear feedback and implementation tracking
+- **Alignment**: Technical implementation matches creative vision
+- **Scalability**: Process works for larger content and features
+
+## 📝 Best Practices
+
+### **For Game Director**
+- **Be Specific**: Provide detailed, actionable feedback
+- **Prioritize**: Focus on high-impact changes first
+- **Test Thoroughly**: Play the game before providing feedback
+- **Document Decisions**: Record creative choices and reasoning
+
+### **For Cursor Implementation**
+- **Follow Creative Direction**: Implement exactly as specified
+- **Maintain Quality**: Ensure all changes meet performance targets
+- **Test Automatically**: Run full test suite after each change
+- **Document Changes**: Update implementation plans and reports
+
+### **For Workflow Optimization**
+- **Iterate Quickly**: Short feedback and implementation cycles
+- **Automate Everything**: Minimize manual steps
+- **Track Progress**: Monitor implementation and creative alignment
+- **Communicate Clearly**: Maintain clear feedback and status reporting
+description:
+globs:
+alwaysApply: false
+---
