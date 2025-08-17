@@ -14,9 +14,10 @@ public class ModernGameUI : MonoBehaviour
     [Header("UI References")]
     private Canvas _mainCanvas;
     private RectTransform _mainPanel;
-    private RectTransform _headerPanel;
     private RectTransform _contentPanel;
     private RectTransform _logPanel;
+    private Button _minimizeButton;
+    private bool _isMinimized = false;
     
     [Header("Control Elements")]
     private Slider _dcSlider;
@@ -137,9 +138,9 @@ public class ModernGameUI : MonoBehaviour
         contentGO.transform.SetParent(_mainCanvas.transform);
         _contentPanel = contentGO.AddComponent<RectTransform>();
         
-        _contentPanel.anchorMin = new Vector2(0, 1);
-        _contentPanel.anchorMax = new Vector2(1, 1);
-        _contentPanel.pivot = new Vector2(0.5f, 1);
+        _contentPanel.anchorMin = new Vector2(0, 0);
+        _contentPanel.anchorMax = new Vector2(1, 0);
+        _contentPanel.pivot = new Vector2(0.5f, 0);
         _contentPanel.anchoredPosition = Vector2.zero;
         _contentPanel.sizeDelta = new Vector2(0, 320);
         
@@ -149,9 +150,10 @@ public class ModernGameUI : MonoBehaviour
         // Add subtle shadow
         var shadow = contentGO.AddComponent<Shadow>();
         shadow.effectColor = new Color(0, 0, 0, 0.2f);
-        shadow.effectDistance = new Vector2(0, -4);
+        shadow.effectDistance = new Vector2(0, 4);
         
         CreateContentLayout(contentGO.transform);
+        CreateMinimizeButton(contentGO.transform);
     }
     
     private void CreateContentLayout(Transform parent)
@@ -423,16 +425,85 @@ public class ModernGameUI : MonoBehaviour
         label.color = _textPrimary;
     }
     
+    private void CreateMinimizeButton(Transform parent)
+    {
+        var minimizeButtonGO = new GameObject("MinimizeButton");
+        minimizeButtonGO.transform.SetParent(parent);
+        var rect = minimizeButtonGO.AddComponent<RectTransform>();
+        rect.anchorMin = new Vector2(1, 0);
+        rect.anchorMax = new Vector2(1, 0);
+        rect.pivot = new Vector2(1, 0);
+        rect.anchoredPosition = new Vector2(-24, -24);
+        rect.sizeDelta = new Vector2(48, 48);
+        
+        _minimizeButton = minimizeButtonGO.AddComponent<Button>();
+        
+        // Create beautiful background with gradient effect
+        var bgGO = new GameObject("Background");
+        bgGO.transform.SetParent(minimizeButtonGO.transform);
+        var bgRect = bgGO.AddComponent<RectTransform>();
+        bgRect.anchorMin = Vector2.zero;
+        bgRect.anchorMax = Vector2.one;
+        bgRect.offsetMin = Vector2.zero;
+        bgRect.offsetMax = Vector2.zero;
+        var bgImg = bgGO.AddComponent<Image>();
+        
+        // Add subtle shadow for depth
+        var shadow = bgGO.AddComponent<Shadow>();
+        shadow.effectColor = new Color(0, 0, 0, 0.3f);
+        shadow.effectDistance = new Vector2(0, -2);
+        
+        // Set colors
+        bgImg.color = _buttonPrimary;
+        _minimizeButton.targetGraphic = bgImg;
+        
+        // Set up button colors
+        var colors = _minimizeButton.colors;
+        colors.normalColor = _buttonPrimary;
+        colors.highlightedColor = _buttonPrimaryHover;
+        colors.pressedColor = _buttonPrimaryPressed;
+        colors.selectedColor = _buttonPrimaryHover;
+        colors.fadeDuration = 0.1f;
+        _minimizeButton.colors = colors;
+        
+        // Create beautiful label with better typography
+        var labelText = CreateBeautifulText(minimizeButtonGO.transform, "—", _bodyFontSize, TextAlignmentOptions.Center);
+        labelText.color = Color.white;
+        labelText.fontStyle = FontStyles.Bold;
+        
+        var labelRect = labelText.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = new Vector2(8, 4);
+        labelRect.offsetMax = new Vector2(-8, -4);
+        
+        // Add subtle inner glow effect
+        var glowGO = new GameObject("Glow");
+        glowGO.transform.SetParent(minimizeButtonGO.transform);
+        var glowRect = glowGO.AddComponent<RectTransform>();
+        glowRect.anchorMin = Vector2.zero;
+        glowRect.anchorMax = Vector2.one;
+        glowRect.offsetMin = new Vector2(2, 2);
+        glowRect.offsetMax = new Vector2(-2, -2);
+        var glowImg = glowGO.AddComponent<Image>();
+        glowImg.color = new Color(1f, 1f, 1f, 0.1f);
+        
+        // Ensure glow is behind the background
+        glowGO.transform.SetAsFirstSibling();
+        
+        _minimizeButton.onClick.AddListener(OnMinimizeClicked);
+    }
+    
     private void CreateLogPanel()
     {
         var logGO = new GameObject("LogPanel");
         logGO.transform.SetParent(_mainCanvas.transform);
         _logPanel = logGO.AddComponent<RectTransform>();
         
-        _logPanel.anchorMin = new Vector2(0, 1);
-        _logPanel.anchorMax = new Vector2(1, 1);
-        _logPanel.pivot = new Vector2(0.5f, 1);
-        _logPanel.anchoredPosition = new Vector2(0, -320);
+        _logPanel.anchorMin = new Vector2(0, 0);
+        _logPanel.anchorMax = new Vector2(1, 0);
+        _logPanel.pivot = new Vector2(0.5f, 0);
+        _logPanel.anchoredPosition = new Vector2(0, 320);
         _logPanel.sizeDelta = new Vector2(0, 120);
         
         var bg = logGO.AddComponent<Image>();
@@ -441,7 +512,7 @@ public class ModernGameUI : MonoBehaviour
         // Add subtle shadow
         var shadow = logGO.AddComponent<Shadow>();
         shadow.effectColor = new Color(0, 0, 0, 0.1f);
-        shadow.effectDistance = new Vector2(0, -2);
+        shadow.effectDistance = new Vector2(0, 2);
         
         CreateLogContent(logGO.transform);
     }
@@ -919,6 +990,27 @@ public class ModernGameUI : MonoBehaviour
     {
         GetComponent<DiceGate>()?.SetDC(value);
         UpdateUI();
+    }
+    
+    private void OnMinimizeClicked()
+    {
+        _isMinimized = !_isMinimized;
+        if (_isMinimized)
+        {
+            // Minimized: small panel at bottom, hide log
+            _contentPanel.sizeDelta = new Vector2(0, 60);
+            _logPanel.gameObject.SetActive(false);
+            _minimizeButton.GetComponentInChildren<TextMeshProUGUI>().text = "□";
+            AppendLog("[UI] Panel minimized");
+        }
+        else
+        {
+            // Maximized: full panel at bottom, show log
+            _contentPanel.sizeDelta = new Vector2(0, 320);
+            _logPanel.gameObject.SetActive(true);
+            _minimizeButton.GetComponentInChildren<TextMeshProUGUI>().text = "—";
+            AppendLog("[UI] Panel maximized");
+        }
     }
     
     public void AppendLog(string line)
