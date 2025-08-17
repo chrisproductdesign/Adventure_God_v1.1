@@ -248,3 +248,15 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,node,unity
+
+# MCP node logs and temp
+/tools/mcp-node/logs/
+/tools/mcp-node/npm-install.log
+# Unity MCP listener logs
+Assets/Editor/McpUnityListener/log.txt
+
+# Unity generated directories (should not be tracked)
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/UserSettings/
