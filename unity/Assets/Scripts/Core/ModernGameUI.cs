@@ -14,8 +14,6 @@ public class ModernGameUI : MonoBehaviour
     [Header("UI References")]
     private Canvas _mainCanvas;
     private RectTransform _mainPanel;
-    private RectTransform _contentPanel;
-    private RectTransform _logPanel;
     private Button _minimizeButton;
     private bool _isMinimized = false;
     
@@ -104,8 +102,7 @@ public class ModernGameUI : MonoBehaviour
     private void CreateBeautifulUI()
     {
         CreateMainCanvas();
-        CreateContentPanel();
-        CreateLogPanel();
+        CreateMainPanel();
         ApplyBeautifulStyling();
     }
     
@@ -132,28 +129,54 @@ public class ModernGameUI : MonoBehaviour
         }
     }
     
-    private void CreateContentPanel()
+    private void CreateMainPanel()
     {
-        var contentGO = new GameObject("ContentPanel");
-        contentGO.transform.SetParent(_mainCanvas.transform);
-        _contentPanel = contentGO.AddComponent<RectTransform>();
+        var mainGO = new GameObject("MainPanel");
+        mainGO.transform.SetParent(_mainCanvas.transform);
+        _mainPanel = mainGO.AddComponent<RectTransform>();
         
-        _contentPanel.anchorMin = new Vector2(0, 0);
-        _contentPanel.anchorMax = new Vector2(1, 0);
-        _contentPanel.pivot = new Vector2(0.5f, 0);
-        _contentPanel.anchoredPosition = Vector2.zero;
-        _contentPanel.sizeDelta = new Vector2(0, 320);
+        // Position at bottom of screen
+        _mainPanel.anchorMin = new Vector2(0, 0);
+        _mainPanel.anchorMax = new Vector2(1, 0);
+        _mainPanel.pivot = new Vector2(0.5f, 0);
+        _mainPanel.anchoredPosition = Vector2.zero;
+        _mainPanel.sizeDelta = new Vector2(0, 320);
         
-        var bg = contentGO.AddComponent<Image>();
+        var bg = mainGO.AddComponent<Image>();
         bg.color = _secondaryBackground;
         
-        // Add subtle shadow
-        var shadow = contentGO.AddComponent<Shadow>();
+        // Add shadow for depth
+        var shadow = mainGO.AddComponent<Shadow>();
         shadow.effectColor = new Color(0, 0, 0, 0.2f);
         shadow.effectDistance = new Vector2(0, 4);
         
-        CreateContentLayout(contentGO.transform);
-        CreateMinimizeButton(contentGO.transform);
+        CreatePanelContent(mainGO.transform);
+        CreateMinimizeButton(mainGO.transform);
+    }
+    
+    private void CreatePanelContent(Transform parent)
+    {
+        // Create content area (top portion)
+        var contentGO = new GameObject("ContentArea");
+        contentGO.transform.SetParent(parent);
+        var contentRect = contentGO.AddComponent<RectTransform>();
+        contentRect.anchorMin = new Vector2(0, 0.3f);
+        contentRect.anchorMax = new Vector2(1, 1);
+        contentRect.offsetMin = new Vector2(24, 24);
+        contentRect.offsetMax = new Vector2(-24, -24);
+        
+        CreateContentLayout(contentRect);
+        
+        // Create log area (bottom portion)
+        var logGO = new GameObject("LogArea");
+        logGO.transform.SetParent(parent);
+        var logRect = logGO.AddComponent<RectTransform>();
+        logRect.anchorMin = new Vector2(0, 0);
+        logRect.anchorMax = new Vector2(1, 0.3f);
+        logRect.offsetMin = new Vector2(24, 24);
+        logRect.offsetMax = new Vector2(-24, -12);
+        
+        CreateLogContent(logRect);
     }
     
     private void CreateContentLayout(Transform parent)
@@ -494,29 +517,6 @@ public class ModernGameUI : MonoBehaviour
         _minimizeButton.onClick.AddListener(OnMinimizeClicked);
     }
     
-    private void CreateLogPanel()
-    {
-        var logGO = new GameObject("LogPanel");
-        logGO.transform.SetParent(_mainCanvas.transform);
-        _logPanel = logGO.AddComponent<RectTransform>();
-        
-        _logPanel.anchorMin = new Vector2(0, 0);
-        _logPanel.anchorMax = new Vector2(1, 0);
-        _logPanel.pivot = new Vector2(0.5f, 0);
-        _logPanel.anchoredPosition = new Vector2(0, 320);
-        _logPanel.sizeDelta = new Vector2(0, 120);
-        
-        var bg = logGO.AddComponent<Image>();
-        bg.color = new Color(0, 0, 0, 0.15f);
-        
-        // Add subtle shadow
-        var shadow = logGO.AddComponent<Shadow>();
-        shadow.effectColor = new Color(0, 0, 0, 0.1f);
-        shadow.effectDistance = new Vector2(0, 2);
-        
-        CreateLogContent(logGO.transform);
-    }
-    
     private void CreateLogContent(Transform parent)
     {
         var logContentGO = new GameObject("LogContent");
@@ -524,8 +524,8 @@ public class ModernGameUI : MonoBehaviour
         var logContentRect = logContentGO.AddComponent<RectTransform>();
         logContentRect.anchorMin = new Vector2(0, 0);
         logContentRect.anchorMax = new Vector2(1, 1);
-        logContentRect.offsetMin = new Vector2(24, 24);
-        logContentRect.offsetMax = new Vector2(-24, -24);
+        logContentRect.offsetMin = new Vector2(12, 12);
+        logContentRect.offsetMax = new Vector2(-12, -12);
         
         var logBg = logContentGO.AddComponent<Image>();
         logBg.color = new Color(0, 0, 0, 0.1f);
@@ -536,8 +536,8 @@ public class ModernGameUI : MonoBehaviour
         var scrollViewRect = scrollViewGO.AddComponent<RectTransform>();
         scrollViewRect.anchorMin = Vector2.zero;
         scrollViewRect.anchorMax = Vector2.one;
-        scrollViewRect.offsetMin = new Vector2(12, 12);
-        scrollViewRect.offsetMax = new Vector2(-12, -12);
+        scrollViewRect.offsetMin = new Vector2(8, 8);
+        scrollViewRect.offsetMax = new Vector2(-8, -8);
         
         var scrollView = scrollViewGO.AddComponent<ScrollRect>();
         var viewportGO = new GameObject("Viewport");
@@ -561,8 +561,8 @@ public class ModernGameUI : MonoBehaviour
         contentRect.sizeDelta = new Vector2(0, 0);
         
         var contentLayout = contentGO.AddComponent<VerticalLayoutGroup>();
-        contentLayout.padding = new RectOffset(16, 16, 16, 16);
-        contentLayout.spacing = 6;
+        contentLayout.padding = new RectOffset(12, 12, 12, 12);
+        contentLayout.spacing = 4;
         contentLayout.childControlHeight = false;
         contentLayout.childControlWidth = true;
         contentLayout.childForceExpandHeight = false;
@@ -571,7 +571,7 @@ public class ModernGameUI : MonoBehaviour
         _logText = CreateBeautifulText(contentGO.transform, "", _smallFontSize, TextAlignmentOptions.TopLeft);
         _logText.color = _textSecondary;
         var logTextRect = _logText.GetComponent<RectTransform>();
-        logTextRect.sizeDelta = new Vector2(0, 200);
+        logTextRect.sizeDelta = new Vector2(0, 100);
         
         scrollView.viewport = viewportRect;
         scrollView.content = contentRect;
@@ -997,17 +997,15 @@ public class ModernGameUI : MonoBehaviour
         _isMinimized = !_isMinimized;
         if (_isMinimized)
         {
-            // Minimized: small panel at bottom, hide log
-            _contentPanel.sizeDelta = new Vector2(0, 60);
-            _logPanel.gameObject.SetActive(false);
+            // Minimized: small panel at bottom
+            _mainPanel.sizeDelta = new Vector2(0, 60);
             _minimizeButton.GetComponentInChildren<TextMeshProUGUI>().text = "□";
             AppendLog("[UI] Panel minimized");
         }
         else
         {
-            // Maximized: full panel at bottom, show log
-            _contentPanel.sizeDelta = new Vector2(0, 320);
-            _logPanel.gameObject.SetActive(true);
+            // Maximized: full panel at bottom
+            _mainPanel.sizeDelta = new Vector2(0, 320);
             _minimizeButton.GetComponentInChildren<TextMeshProUGUI>().text = "—";
             AppendLog("[UI] Panel maximized");
         }
