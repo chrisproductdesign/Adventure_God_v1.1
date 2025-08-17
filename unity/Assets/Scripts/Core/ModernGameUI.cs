@@ -64,7 +64,6 @@ public class ModernGameUI : MonoBehaviour
     [SerializeField] private int _titleFontSize = 18;
     [SerializeField] private int _bodyFontSize = 16;
     [SerializeField] private int _smallFontSize = 14;
-    [SerializeField] private float _sectionSpacing = 20f;
     [SerializeField] private float _elementSpacing = 12f;
     [SerializeField] private float _buttonHeight = 48f;
     [SerializeField] private float _inputHeight = 44f;

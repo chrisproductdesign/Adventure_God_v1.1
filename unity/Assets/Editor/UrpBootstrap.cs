@@ -25,12 +25,25 @@ public static class UrpBootstrap
 		{
 			var path = "Assets/Settings";
 			if (!AssetDatabase.IsValidFolder(path)) AssetDatabase.CreateFolder("Assets", "Settings");
-			var asset = ScriptableObject.CreateInstance<UniversalRenderPipelineAsset>();
-			AssetDatabase.CreateAsset(asset, path + "/UniversalRenderPipelineAsset.asset");
-			AssetDatabase.SaveAssets();
-			GraphicsSettings.renderPipelineAsset = asset;
-			QualitySettings.renderPipeline = asset;
-			EnsureRendererAssigned(asset);
+			
+			// Check if asset already exists first
+			var existingAsset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(path + "/UniversalRenderPipelineAsset.asset");
+			if (existingAsset != null)
+			{
+				GraphicsSettings.renderPipelineAsset = existingAsset;
+				QualitySettings.renderPipeline = existingAsset;
+				Debug.Log("[UrpBootstrap] Reusing existing URP Asset");
+			}
+			else
+			{
+				var asset = ScriptableObject.CreateInstance<UniversalRenderPipelineAsset>();
+				AssetDatabase.CreateAsset(asset, path + "/UniversalRenderPipelineAsset.asset");
+				AssetDatabase.SaveAssets();
+				GraphicsSettings.renderPipelineAsset = asset;
+				QualitySettings.renderPipeline = asset;
+				Debug.Log("[UrpBootstrap] Created new URP Asset");
+			}
+			EnsureRendererAssigned(GraphicsSettings.renderPipelineAsset as UniversalRenderPipelineAsset);
 		}
 
 		// Prefer 4x MSAA at project level (URP also controls per-quality)
@@ -80,9 +93,20 @@ public static class UrpBootstrap
 	{
 		var existing = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(path);
 		if (existing != null) return existing;
-		var asset = ScriptableObject.CreateInstance<UniversalRenderPipelineAsset>();
-		AssetDatabase.CreateAsset(asset, path);
-		return asset;
+		
+		try
+		{
+			var asset = ScriptableObject.CreateInstance<UniversalRenderPipelineAsset>();
+			AssetDatabase.CreateAsset(asset, path);
+			AssetDatabase.SaveAssets();
+			return asset;
+		}
+		catch (Exception ex)
+		{
+			Debug.LogWarning($"[UrpBootstrap] Failed to create asset at {path}: {ex.Message}");
+			// Try to load again in case it was created by another process
+			return AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(path);
+		}
 	}
 
 	private static void ConfigureUrpAsset(UniversalRenderPipelineAsset asset, int cascades, Vector3 fourSplit)
@@ -117,25 +141,57 @@ public static class UrpBootstrap
 	private static void EnsureRendererAssigned(UniversalRenderPipelineAsset asset)
 	{
 		if (asset == null) return;
-		var so = new SerializedObject(asset);
-		var list = so.FindProperty("m_RendererDataList");
-		var defaultIndex = so.FindProperty("m_DefaultRendererIndex");
-		bool needsRenderer = (list == null) || (list.arraySize == 0) || list.GetArrayElementAtIndex(0).objectReferenceValue == null;
-		if (!needsRenderer) return;
-		var renderData = ScriptableObject.CreateInstance<UniversalRendererData>();
-		var dir = "Assets/Settings/URP";
-		if (!AssetDatabase.IsValidFolder("Assets/Settings")) AssetDatabase.CreateFolder("Assets", "Settings");
-		if (!AssetDatabase.IsValidFolder(dir)) AssetDatabase.CreateFolder("Assets/Settings", "URP");
-		var rdPath = dir + "/ForwardRenderer.asset";
-		AssetDatabase.CreateAsset(renderData, rdPath);
-		AssetDatabase.SaveAssets();
-		if (list != null)
+		
+		try
 		{
-			list.arraySize = 1;
-			list.GetArrayElementAtIndex(0).objectReferenceValue = renderData;
+			var so = new SerializedObject(asset);
+			var list = so.FindProperty("m_RendererDataList");
+			var defaultIndex = so.FindProperty("m_DefaultRendererIndex");
+			
+			// Check if renderer is already assigned
+			bool needsRenderer = (list == null) || (list.arraySize == 0) || list.GetArrayElementAtIndex(0).objectReferenceValue == null;
+			if (!needsRenderer) return;
+			
+			// Try to load existing renderer first
+			var dir = "Assets/Settings/URP";
+			var rdPath = dir + "/ForwardRenderer.asset";
+			var existingRenderer = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(rdPath);
+			
+			if (existingRenderer != null)
+			{
+				// Use existing renderer
+				if (list != null)
+				{
+					list.arraySize = 1;
+					list.GetArrayElementAtIndex(0).objectReferenceValue = existingRenderer;
+				}
+				if (defaultIndex != null) defaultIndex.intValue = 0;
+				so.ApplyModifiedProperties();
+				Debug.Log("[UrpBootstrap] Reusing existing ForwardRenderer");
+				return;
+			}
+			
+			// Create new renderer only if needed
+			if (!AssetDatabase.IsValidFolder("Assets/Settings")) AssetDatabase.CreateFolder("Assets", "Settings");
+			if (!AssetDatabase.IsValidFolder(dir)) AssetDatabase.CreateFolder("Assets/Settings", "URP");
+			
+			var renderData = ScriptableObject.CreateInstance<UniversalRendererData>();
+			AssetDatabase.CreateAsset(renderData, rdPath);
+			AssetDatabase.SaveAssets();
+			
+			if (list != null)
+			{
+				list.arraySize = 1;
+				list.GetArrayElementAtIndex(0).objectReferenceValue = renderData;
+			}
+			if (defaultIndex != null) defaultIndex.intValue = 0;
+			so.ApplyModifiedProperties();
+			Debug.Log("[UrpBootstrap] Created new ForwardRenderer");
 		}
-		if (defaultIndex != null) defaultIndex.intValue = 0;
-		so.ApplyModifiedProperties();
+		catch (Exception ex)
+		{
+			Debug.LogWarning($"[UrpBootstrap] Failed to ensure renderer assignment: {ex.Message}");
+		}
 	}
 }
 #endif
