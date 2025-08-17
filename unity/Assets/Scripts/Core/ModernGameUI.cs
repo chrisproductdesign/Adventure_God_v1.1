@@ -6,8 +6,8 @@ using TMPro;
 using System;
 
 /// <summary>
-/// Modern Game UI System - Apple-inspired design with elegant interactions
-/// Replaces the basic DiceGateUI with a sophisticated, professional interface
+/// Master UX/UI Design - Professional Game Director Interface
+/// Designed with accessibility, readability, and usability as top priorities
 /// </summary>
 public class ModernGameUI : MonoBehaviour
 {
@@ -43,26 +43,31 @@ public class ModernGameUI : MonoBehaviour
     private TextMeshProUGUI _dcValueText;
     private TextMeshProUGUI _logText;
     
-    [Header("Visual Elements")]
-    private Image _mainPanelBackground;
-    private Image _controlPanelBackground;
-    private Image _logPanelBackground;
+    [Header("Collapsible Sections")]
+    private Button _logToggleButton;
+    private Button _controlsToggleButton;
+    private bool _logCollapsed = false;
+    private bool _controlsCollapsed = false;
     
-    [Header("Configuration")]
-    [SerializeField] private Color _primaryColor = new Color(0.1f, 0.1f, 0.15f, 0.95f);
-    [SerializeField] private Color _secondaryColor = new Color(0.15f, 0.15f, 0.2f, 0.9f);
+    [Header("Master Design System")]
+    [SerializeField] private Color _primaryBackground = new Color(0.08f, 0.08f, 0.12f, 0.98f);
+    [SerializeField] private Color _secondaryBackground = new Color(0.12f, 0.12f, 0.16f, 0.95f);
     [SerializeField] private Color _accentColor = new Color(0.2f, 0.6f, 1f, 1f);
     [SerializeField] private Color _successColor = new Color(0.2f, 0.8f, 0.4f, 1f);
-    [SerializeField] private Color _warningColor = new Color(1f, 0.6f, 0.2f, 1f);
-    [SerializeField] private Color _errorColor = new Color(1f, 0.3f, 0.3f, 1f);
-    [SerializeField] private Color _textColor = new Color(0.9f, 0.9f, 0.9f, 1f);
-    [SerializeField] private Color _textSecondaryColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+    [SerializeField] private Color _warningColor = new Color(1f, 0.7f, 0.2f, 1f);
+    [SerializeField] private Color _errorColor = new Color(1f, 0.4f, 0.4f, 1f);
+    [SerializeField] private Color _textPrimary = new Color(0.95f, 0.95f, 0.95f, 1f);
+    [SerializeField] private Color _textSecondary = new Color(0.8f, 0.8f, 0.8f, 1f);
+    [SerializeField] private Color _textMuted = new Color(0.6f, 0.6f, 0.6f, 1f);
     
-    [Header("Layout")]
-    [SerializeField] private float _panelSpacing = 10f;
-    [SerializeField] private float _elementSpacing = 8f;
-    [SerializeField] private float _borderRadius = 8f;
-    [SerializeField] private float _animationDuration = 0.2f;
+    [Header("Typography & Spacing")]
+    [SerializeField] private int _titleFontSize = 18;
+    [SerializeField] private int _bodyFontSize = 16;
+    [SerializeField] private int _smallFontSize = 14;
+    [SerializeField] private float _sectionSpacing = 20f;
+    [SerializeField] private float _elementSpacing = 12f;
+    [SerializeField] private float _buttonHeight = 48f;
+    [SerializeField] private float _inputHeight = 44f;
     
     // State
     private string[] _actors = { "adv-1", "adv-2", "adv-3" };
@@ -76,7 +81,7 @@ public class ModernGameUI : MonoBehaviour
     
     void Start()
     {
-        CreateModernUI();
+        CreateMasterUI();
         SetupEventHandlers();
         UpdateUI();
     }
@@ -87,19 +92,19 @@ public class ModernGameUI : MonoBehaviour
         UpdateCandidateDisplay();
     }
     
-    private void CreateModernUI()
+    private void CreateMasterUI()
     {
         CreateMainCanvas();
         CreateMainPanel();
-        CreateControlPanel();
-        CreateLogPanel();
-        CreateStatusPanel();
-        ApplyModernStyling();
+        CreateHeaderSection();
+        CreateControlsSection();
+        CreateLogSection();
+        ApplyMasterStyling();
     }
     
     private void CreateMainCanvas()
     {
-        var canvasGO = new GameObject("ModernGameCanvas");
+        var canvasGO = new GameObject("MasterGameCanvas");
         _mainCanvas = canvasGO.AddComponent<Canvas>();
         _mainCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         _mainCanvas.sortingOrder = 100;
@@ -112,7 +117,6 @@ public class ModernGameUI : MonoBehaviour
         
         canvasGO.AddComponent<GraphicRaycaster>();
         
-        // Ensure EventSystem exists
         if (EventSystem.current == null)
         {
             var es = new GameObject("EventSystem");
@@ -127,102 +131,132 @@ public class ModernGameUI : MonoBehaviour
         mainPanelGO.transform.SetParent(_mainCanvas.transform);
         _mainPanel = mainPanelGO.AddComponent<RectTransform>();
         
-        // Position at top of screen with proper spacing
         _mainPanel.anchorMin = new Vector2(0, 1);
         _mainPanel.anchorMax = new Vector2(1, 1);
         _mainPanel.pivot = new Vector2(0.5f, 1);
         _mainPanel.anchoredPosition = Vector2.zero;
-        _mainPanel.sizeDelta = new Vector2(0, 280);
+        _mainPanel.sizeDelta = new Vector2(0, 320);
         
-        _mainPanelBackground = mainPanelGO.AddComponent<Image>();
-        _mainPanelBackground.color = _primaryColor;
+        var bg = mainPanelGO.AddComponent<Image>();
+        bg.color = _primaryBackground;
         
-        // Add subtle shadow effect
+        // Add subtle shadow
         var shadow = mainPanelGO.AddComponent<Shadow>();
-        shadow.effectColor = new Color(0, 0, 0, 0.3f);
-        shadow.effectDistance = new Vector2(0, -2);
+        shadow.effectColor = new Color(0, 0, 0, 0.4f);
+        shadow.effectDistance = new Vector2(0, -4);
     }
     
-    private void CreateControlPanel()
+    private void CreateHeaderSection()
     {
-        var controlPanelGO = new GameObject("ControlPanel");
-        controlPanelGO.transform.SetParent(_mainPanel);
-        _controlPanel = controlPanelGO.AddComponent<RectTransform>();
+        var headerGO = new GameObject("HeaderSection");
+        headerGO.transform.SetParent(_mainPanel);
+        var headerRect = headerGO.AddComponent<RectTransform>();
         
-        _controlPanel.anchorMin = new Vector2(0, 0);
-        _controlPanel.anchorMax = new Vector2(1, 1);
-        _controlPanel.offsetMin = new Vector2(_panelSpacing, _panelSpacing);
-        _controlPanel.offsetMax = new Vector2(-_panelSpacing, -_panelSpacing);
+        headerRect.anchorMin = new Vector2(0, 1);
+        headerRect.anchorMax = new Vector2(1, 1);
+        headerRect.pivot = new Vector2(0, 1);
+        headerRect.anchoredPosition = Vector2.zero;
+        headerRect.sizeDelta = new Vector2(0, 60);
         
-        _controlPanelBackground = controlPanelGO.AddComponent<Image>();
-        _controlPanelBackground.color = _secondaryColor;
+        var headerBg = headerGO.AddComponent<Image>();
+        headerBg.color = _secondaryBackground;
         
-        CreateControlElements();
+        // Title
+        var title = CreateTextMeshPro(headerGO.transform, "Game Director Console", _titleFontSize, TextAlignmentOptions.Left);
+        title.color = _textPrimary;
+        var titleRect = title.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0, 0);
+        titleRect.anchorMax = new Vector2(0.5f, 1);
+        titleRect.offsetMin = new Vector2(20, 0);
+        titleRect.offsetMax = new Vector2(-10, 0);
+        
+        // Connection Status
+        CreateConnectionStatus(headerGO.transform, new Vector2(0.5f, 0.5f));
     }
     
-    private void CreateControlElements()
-    {
-        float yOffset = -20f;
-        float elementHeight = 40f;
-        
-        // Top row: Connection status, DC slider, Roll button
-        CreateConnectionStatus(new Vector2(20, yOffset));
-        CreateDCSlider(new Vector2(200, yOffset));
-        CreateRollButton(new Vector2(500, yOffset));
-        CreateAutoButton(new Vector2(620, yOffset));
-        
-        yOffset -= (elementHeight + _elementSpacing);
-        
-        // Second row: Situation input, Propose button
-        CreateSituationInput(new Vector2(20, yOffset), 400);
-        CreateProposeButton(new Vector2(440, yOffset));
-        CreateSendButton(new Vector2(560, yOffset));
-        CreateUseSuggestedDcToggle(new Vector2(680, yOffset));
-        
-        yOffset -= (elementHeight + _elementSpacing);
-        
-        // Third row: Result input, Save button, Actor selection
-        CreateResultInput(new Vector2(20, yOffset), 300);
-        CreateSaveButton(new Vector2(340, yOffset));
-        CreateActorButton(new Vector2(460, yOffset));
-        
-        yOffset -= (elementHeight + _elementSpacing);
-        
-        // Fourth row: POI, Snap, Candidate navigation
-        CreatePOIButton(new Vector2(20, yOffset));
-        CreateSnapButton(new Vector2(140, yOffset));
-        CreateCandidateNavigation(new Vector2(260, yOffset));
-        CreateNudgeButtons(new Vector2(400, yOffset));
-    }
-    
-    private void CreateConnectionStatus(Vector2 position)
+    private void CreateConnectionStatus(Transform parent, Vector2 anchor)
     {
         var statusGO = new GameObject("ConnectionStatus");
-        statusGO.transform.SetParent(_controlPanel);
+        statusGO.transform.SetParent(parent);
         var rect = statusGO.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0, 1);
-        rect.anchorMax = new Vector2(0, 1);
-        rect.pivot = new Vector2(0, 1);
-        rect.anchoredPosition = position;
-        rect.sizeDelta = new Vector2(160, 30);
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = anchor;
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = new Vector2(200, 40);
         
         var bg = statusGO.AddComponent<Image>();
         bg.color = new Color(0, 0, 0, 0.3f);
         
-        _connectionStatus = CreateTextMeshPro(statusGO.transform, "GW: Connecting...", 14, TextAlignmentOptions.Left);
-        _connectionStatus.color = _textSecondaryColor;
+        _connectionStatus = CreateTextMeshPro(statusGO.transform, "Connecting...", _bodyFontSize, TextAlignmentOptions.Center);
+        _connectionStatus.color = _textSecondary;
     }
     
-    private void CreateDCSlider(Vector2 position)
+    private void CreateControlsSection()
+    {
+        var controlsGO = new GameObject("ControlsSection");
+        controlsGO.transform.SetParent(_mainPanel);
+        var controlsRect = controlsGO.AddComponent<RectTransform>();
+        
+        controlsRect.anchorMin = new Vector2(0, 1);
+        controlsRect.anchorMax = new Vector2(1, 1);
+        controlsRect.pivot = new Vector2(0, 1);
+        controlsRect.anchoredPosition = new Vector2(0, -60);
+        controlsRect.sizeDelta = new Vector2(0, 180);
+        
+        _controlPanel = controlsRect;
+        
+        // Toggle button for controls
+        _controlsToggleButton = CreateToggleButton(controlsGO.transform, "▼ Controls", new Vector2(0, 1), new Vector2(150, 30));
+        _controlsToggleButton.onClick.AddListener(ToggleControls);
+        
+        // Controls content
+        CreateControlsContent(controlsGO.transform);
+    }
+    
+    private void CreateControlsContent(Transform parent)
+    {
+        float yOffset = -40f;
+        float xOffset = 20f;
+        
+        // Row 1: DC Slider and Roll Button
+        CreateDCSlider(parent, new Vector2(xOffset, yOffset));
+        CreateRollButton(parent, new Vector2(xOffset + 300, yOffset));
+        CreateAutoButton(parent, new Vector2(xOffset + 420, yOffset));
+        
+        yOffset -= (_buttonHeight + _elementSpacing);
+        
+        // Row 2: Situation Input and Action Buttons
+        CreateSituationInput(parent, new Vector2(xOffset, yOffset), 400);
+        CreateProposeButton(parent, new Vector2(xOffset + 420, yOffset));
+        CreateSendButton(parent, new Vector2(xOffset + 540, yOffset));
+        
+        yOffset -= (_inputHeight + _elementSpacing);
+        
+        // Row 3: Result Input and Save Button
+        CreateResultInput(parent, new Vector2(xOffset, yOffset), 300);
+        CreateSaveButton(parent, new Vector2(xOffset + 320, yOffset));
+        CreateActorButton(parent, new Vector2(xOffset + 440, yOffset));
+        
+        yOffset -= (_inputHeight + _elementSpacing);
+        
+        // Row 4: Navigation and Toggle
+        CreatePOIButton(parent, new Vector2(xOffset, yOffset));
+        CreateSnapButton(parent, new Vector2(xOffset + 120, yOffset));
+        CreateCandidateNavigation(parent, new Vector2(xOffset + 240, yOffset));
+        CreateUseSuggestedDcToggle(parent, new Vector2(xOffset + 400, yOffset));
+    }
+    
+    private void CreateDCSlider(Transform parent, Vector2 position)
     {
         var sliderGO = new GameObject("DCSlider");
-        sliderGO.transform.SetParent(_controlPanel);
+        sliderGO.transform.SetParent(parent);
         var rect = sliderGO.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(0, 1);
         rect.pivot = new Vector2(0, 1);
         rect.anchoredPosition = position;
-        rect.sizeDelta = new Vector2(280, 30);
+        rect.sizeDelta = new Vector2(280, 40);
         
         _dcSlider = sliderGO.AddComponent<Slider>();
         _dcSlider.minValue = 5;
@@ -230,7 +264,7 @@ public class ModernGameUI : MonoBehaviour
         _dcSlider.wholeNumbers = true;
         _dcSlider.value = 10;
         
-        // Create background
+        // Background
         var bgGO = new GameObject("Background");
         bgGO.transform.SetParent(sliderGO.transform);
         var bgRect = bgGO.AddComponent<RectTransform>();
@@ -242,14 +276,14 @@ public class ModernGameUI : MonoBehaviour
         bgImg.color = new Color(0, 0, 0, 0.4f);
         _dcSlider.targetGraphic = bgImg;
         
-        // Create fill area
+        // Fill area
         var fillAreaGO = new GameObject("Fill Area");
         fillAreaGO.transform.SetParent(sliderGO.transform);
         var fillAreaRect = fillAreaGO.AddComponent<RectTransform>();
         fillAreaRect.anchorMin = Vector2.zero;
         fillAreaRect.anchorMax = Vector2.one;
-        fillAreaRect.offsetMin = new Vector2(4, 4);
-        fillAreaRect.offsetMax = new Vector2(-4, -4);
+        fillAreaRect.offsetMin = new Vector2(6, 6);
+        fillAreaRect.offsetMax = new Vector2(-6, -6);
         
         var fillGO = new GameObject("Fill");
         fillGO.transform.SetParent(fillAreaGO.transform);
@@ -262,7 +296,7 @@ public class ModernGameUI : MonoBehaviour
         fillImg.color = _accentColor;
         _dcSlider.fillRect = fillRect;
         
-        // Create handle
+        // Handle
         var handleAreaGO = new GameObject("Handle Slide Area");
         handleAreaGO.transform.SetParent(sliderGO.transform);
         var handleAreaRect = handleAreaGO.AddComponent<RectTransform>();
@@ -274,57 +308,97 @@ public class ModernGameUI : MonoBehaviour
         var handleGO = new GameObject("Handle");
         handleGO.transform.SetParent(handleAreaGO.transform);
         var handleRect = handleGO.AddComponent<RectTransform>();
-        handleRect.sizeDelta = new Vector2(20, 20);
+        handleRect.sizeDelta = new Vector2(24, 24);
         var handleImg = handleGO.AddComponent<Image>();
         handleImg.color = Color.white;
         _dcSlider.handleRect = handleRect;
         
-        // Create DC value text
-        _dcValueText = CreateTextMeshPro(sliderGO.transform, "DC: 10", 12, TextAlignmentOptions.Center);
+        // DC value text
+        _dcValueText = CreateTextMeshPro(sliderGO.transform, "DC: 10", _bodyFontSize, TextAlignmentOptions.Center);
         var dcTextRect = _dcValueText.GetComponent<RectTransform>();
         dcTextRect.anchorMin = new Vector2(0, 0);
         dcTextRect.anchorMax = new Vector2(1, 0);
         dcTextRect.pivot = new Vector2(0.5f, 0);
-        dcTextRect.anchoredPosition = new Vector2(0, -25);
+        dcTextRect.anchoredPosition = new Vector2(0, -30);
         dcTextRect.sizeDelta = new Vector2(0, 20);
-        _dcValueText.color = _textColor;
+        _dcValueText.color = _textPrimary;
     }
     
-    private void CreateRollButton(Vector2 position)
+    private void CreateRollButton(Transform parent, Vector2 position)
     {
-        _rollButton = CreateModernButton("Roll", position, new Vector2(100, 40), _accentColor);
+        _rollButton = CreateMasterButton(parent, "Roll", position, new Vector2(100, _buttonHeight), _accentColor);
     }
     
-    private void CreateAutoButton(Vector2 position)
+    private void CreateAutoButton(Transform parent, Vector2 position)
     {
-        _autoButton = CreateModernButton("Auto: OFF", position, new Vector2(100, 40), _secondaryColor);
+        _autoButton = CreateMasterButton(parent, "Auto: OFF", position, new Vector2(100, _buttonHeight), _secondaryBackground);
     }
     
-    private void CreateSituationInput(Vector2 position, float width)
+    private void CreateSituationInput(Transform parent, Vector2 position, float width)
     {
-        _situationInput = CreateModernInputField("Describe situation or intent...", position, new Vector2(width, 40));
+        _situationInput = CreateMasterInputField(parent, "Describe situation or intent...", position, new Vector2(width, _inputHeight));
     }
     
-    private void CreateProposeButton(Vector2 position)
+    private void CreateProposeButton(Transform parent, Vector2 position)
     {
-        _proposeButton = CreateModernButton("Propose", position, new Vector2(100, 40), _successColor);
+        _proposeButton = CreateMasterButton(parent, "Propose", position, new Vector2(100, _buttonHeight), _successColor);
     }
     
-    private void CreateSendButton(Vector2 position)
+    private void CreateSendButton(Transform parent, Vector2 position)
     {
-        _sendButton = CreateModernButton("Send", position, new Vector2(100, 40), _warningColor);
+        _sendButton = CreateMasterButton(parent, "Send", position, new Vector2(100, _buttonHeight), _warningColor);
     }
     
-    private void CreateUseSuggestedDcToggle(Vector2 position)
+    private void CreateResultInput(Transform parent, Vector2 position, float width)
+    {
+        _resultInput = CreateMasterInputField(parent, "After roll: DM result note...", position, new Vector2(width, _inputHeight));
+    }
+    
+    private void CreateSaveButton(Transform parent, Vector2 position)
+    {
+        _saveButton = CreateMasterButton(parent, "Save", position, new Vector2(100, _buttonHeight), _successColor);
+    }
+    
+    private void CreateActorButton(Transform parent, Vector2 position)
+    {
+        _actorButton = CreateMasterButton(parent, "Actor: adv-1", position, new Vector2(120, _buttonHeight), _secondaryBackground);
+    }
+    
+    private void CreatePOIButton(Transform parent, Vector2 position)
+    {
+        _poiButton = CreateMasterButton(parent, "POI: none", position, new Vector2(100, _buttonHeight), _secondaryBackground);
+    }
+    
+    private void CreateSnapButton(Transform parent, Vector2 position)
+    {
+        _snapButton = CreateMasterButton(parent, "Snap", position, new Vector2(100, _buttonHeight), _accentColor);
+    }
+    
+    private void CreateCandidateNavigation(Transform parent, Vector2 position)
+    {
+        _candPrevButton = CreateMasterButton(parent, "◀", position, new Vector2(40, _buttonHeight), _secondaryBackground);
+        _candNextButton = CreateMasterButton(parent, "▶", new Vector2(position.x + 50, position.y), new Vector2(40, _buttonHeight), _secondaryBackground);
+        
+        _candText = CreateTextMeshPro(parent, "Cand 1/1", _bodyFontSize, TextAlignmentOptions.Center);
+        var candTextRect = _candText.GetComponent<RectTransform>();
+        candTextRect.anchorMin = new Vector2(0, 1);
+        candTextRect.anchorMax = new Vector2(0, 1);
+        candTextRect.pivot = new Vector2(0, 1);
+        candTextRect.anchoredPosition = new Vector2(position.x + 100, position.y);
+        candTextRect.sizeDelta = new Vector2(80, _buttonHeight);
+        _candText.color = _textPrimary;
+    }
+    
+    private void CreateUseSuggestedDcToggle(Transform parent, Vector2 position)
     {
         var toggleGO = new GameObject("UseSuggestedDcToggle");
-        toggleGO.transform.SetParent(_controlPanel);
+        toggleGO.transform.SetParent(parent);
         var rect = toggleGO.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(0, 1);
         rect.pivot = new Vector2(0, 1);
         rect.anchoredPosition = position;
-        rect.sizeDelta = new Vector2(200, 40);
+        rect.sizeDelta = new Vector2(200, _buttonHeight);
         
         _useSuggestedDcToggle = toggleGO.AddComponent<Toggle>();
         
@@ -347,92 +421,60 @@ public class ModernGameUI : MonoBehaviour
         checkmarkRect.anchorMin = new Vector2(0, 0.5f);
         checkmarkRect.anchorMax = new Vector2(0, 0.5f);
         checkmarkRect.pivot = new Vector2(0, 0.5f);
-        checkmarkRect.anchoredPosition = new Vector2(10, 0);
-        checkmarkRect.sizeDelta = new Vector2(20, 20);
+        checkmarkRect.anchoredPosition = new Vector2(15, 0);
+        checkmarkRect.sizeDelta = new Vector2(24, 24);
         var checkmarkImg = checkmarkGO.AddComponent<Image>();
         checkmarkImg.color = _accentColor;
         _useSuggestedDcToggle.graphic = checkmarkImg;
         
         // Label
-        var label = CreateTextMeshPro(toggleGO.transform, "Use Suggested DC", 14, TextAlignmentOptions.Left);
+        var label = CreateTextMeshPro(toggleGO.transform, "Use Suggested DC", _bodyFontSize, TextAlignmentOptions.Left);
         var labelRect = label.GetComponent<RectTransform>();
         labelRect.anchorMin = new Vector2(0, 0);
         labelRect.anchorMax = new Vector2(1, 1);
-        labelRect.offsetMin = new Vector2(40, 0);
+        labelRect.offsetMin = new Vector2(50, 0);
         labelRect.offsetMax = new Vector2(-10, 0);
-        label.color = _textColor;
+        label.color = _textPrimary;
     }
     
-    private void CreateResultInput(Vector2 position, float width)
+    private void CreateLogSection()
     {
-        _resultInput = CreateModernInputField("After roll: DM result note...", position, new Vector2(width, 40));
-    }
-    
-    private void CreateSaveButton(Vector2 position)
-    {
-        _saveButton = CreateModernButton("Save", position, new Vector2(100, 40), _successColor);
-    }
-    
-    private void CreateActorButton(Vector2 position)
-    {
-        _actorButton = CreateModernButton("Actor: adv-1", position, new Vector2(120, 40), _secondaryColor);
-    }
-    
-    private void CreatePOIButton(Vector2 position)
-    {
-        _poiButton = CreateModernButton("POI: none", position, new Vector2(100, 40), _secondaryColor);
-    }
-    
-    private void CreateSnapButton(Vector2 position)
-    {
-        _snapButton = CreateModernButton("Snap", position, new Vector2(100, 40), _accentColor);
-    }
-    
-    private void CreateCandidateNavigation(Vector2 position)
-    {
-        _candPrevButton = CreateModernButton("◀", position, new Vector2(40, 40), _secondaryColor);
-        _candNextButton = CreateModernButton("▶", new Vector2(position.x + 50, position.y), new Vector2(40, 40), _secondaryColor);
+        var logGO = new GameObject("LogSection");
+        logGO.transform.SetParent(_mainPanel);
+        var logRect = logGO.AddComponent<RectTransform>();
         
-        _candText = CreateTextMeshPro(_controlPanel, "Cand 1/1", 14, TextAlignmentOptions.Center);
-        var candTextRect = _candText.GetComponent<RectTransform>();
-        candTextRect.anchorMin = new Vector2(0, 1);
-        candTextRect.anchorMax = new Vector2(0, 1);
-        candTextRect.pivot = new Vector2(0, 1);
-        candTextRect.anchoredPosition = new Vector2(position.x + 100, position.y);
-        candTextRect.sizeDelta = new Vector2(80, 40);
-        _candText.color = _textColor;
+        logRect.anchorMin = new Vector2(0, 1);
+        logRect.anchorMax = new Vector2(1, 1);
+        logRect.pivot = new Vector2(0, 1);
+        logRect.anchoredPosition = new Vector2(0, -240);
+        logRect.sizeDelta = new Vector2(0, 80);
+        
+        _logPanel = logRect;
+        
+        // Toggle button for log
+        _logToggleButton = CreateToggleButton(logGO.transform, "▼ Log", new Vector2(0, 1), new Vector2(100, 30));
+        _logToggleButton.onClick.AddListener(ToggleLog);
+        
+        // Log content
+        CreateLogContent(logGO.transform);
     }
     
-    private void CreateNudgeButtons(Vector2 position)
+    private void CreateLogContent(Transform parent)
     {
-        string[] directions = { "▲", "▼", "◀", "▶" };
-        Vector2[] offsets = { new Vector2(0, 20), new Vector2(0, -20), new Vector2(-20, 0), new Vector2(20, 0) };
+        var logContentGO = new GameObject("LogContent");
+        logContentGO.transform.SetParent(parent);
+        var logContentRect = logContentGO.AddComponent<RectTransform>();
+        logContentRect.anchorMin = new Vector2(0, 0);
+        logContentRect.anchorMax = new Vector2(1, 1);
+        logContentRect.offsetMin = new Vector2(0, 30);
+        logContentRect.offsetMax = new Vector2(0, 0);
         
-        for (int i = 0; i < 4; i++)
-        {
-            _nudgeButtons[i] = CreateModernButton(directions[i], 
-                new Vector2(position.x + offsets[i].x, position.y + offsets[i].y), 
-                new Vector2(30, 30), _secondaryColor);
-        }
-    }
-    
-    private void CreateLogPanel()
-    {
-        var logPanelGO = new GameObject("LogPanel");
-        logPanelGO.transform.SetParent(_mainPanel);
-        _logPanel = logPanelGO.AddComponent<RectTransform>();
+        var logBg = logContentGO.AddComponent<Image>();
+        logBg.color = new Color(0, 0, 0, 0.2f);
         
-        _logPanel.anchorMin = new Vector2(0, 0);
-        _logPanel.anchorMax = new Vector2(0.4f, 1);
-        _logPanel.offsetMin = new Vector2(_panelSpacing, _panelSpacing);
-        _logPanel.offsetMax = new Vector2(-_panelSpacing/2, -_panelSpacing);
-        
-        _logPanelBackground = logPanelGO.AddComponent<Image>();
-        _logPanelBackground.color = new Color(0, 0, 0, 0.2f);
-        
-        // Create scroll view for log
+        // Scroll view for log
         var scrollViewGO = new GameObject("LogScrollView");
-        scrollViewGO.transform.SetParent(logPanelGO.transform);
+        scrollViewGO.transform.SetParent(logContentGO.transform);
         var scrollViewRect = scrollViewGO.AddComponent<RectTransform>();
         scrollViewRect.anchorMin = Vector2.zero;
         scrollViewRect.anchorMax = Vector2.one;
@@ -462,14 +504,14 @@ public class ModernGameUI : MonoBehaviour
         
         var contentLayout = contentGO.AddComponent<VerticalLayoutGroup>();
         contentLayout.padding = new RectOffset(10, 10, 10, 10);
-        contentLayout.spacing = 2;
+        contentLayout.spacing = 4;
         contentLayout.childControlHeight = false;
         contentLayout.childControlWidth = true;
         contentLayout.childForceExpandHeight = false;
         contentLayout.childForceExpandWidth = true;
         
-        _logText = CreateTextMeshPro(contentGO.transform, "", 12, TextAlignmentOptions.TopLeft);
-        _logText.color = _textColor;
+        _logText = CreateTextMeshPro(contentGO.transform, "", _smallFontSize, TextAlignmentOptions.TopLeft);
+        _logText.color = _textSecondary;
         var logTextRect = _logText.GetComponent<RectTransform>();
         logTextRect.sizeDelta = new Vector2(0, 200);
         
@@ -479,25 +521,42 @@ public class ModernGameUI : MonoBehaviour
         scrollView.vertical = true;
     }
     
-    private void CreateStatusPanel()
+    private Button CreateToggleButton(Transform parent, string label, Vector2 anchor, Vector2 size)
     {
-        var statusPanelGO = new GameObject("StatusPanel");
-        statusPanelGO.transform.SetParent(_mainPanel);
-        _statusPanel = statusPanelGO.AddComponent<RectTransform>();
+        var buttonGO = new GameObject(label + "Toggle");
+        buttonGO.transform.SetParent(parent);
+        var rect = buttonGO.AddComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = anchor;
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = size;
         
-        _statusPanel.anchorMin = new Vector2(0.4f, 0);
-        _statusPanel.anchorMax = new Vector2(1, 1);
-        _statusPanel.offsetMin = new Vector2(_panelSpacing/2, _panelSpacing);
-        _statusPanel.offsetMax = new Vector2(-_panelSpacing, -_panelSpacing);
+        var button = buttonGO.AddComponent<Button>();
+        var img = buttonGO.AddComponent<Image>();
+        img.color = new Color(0, 0, 0, 0.3f);
         
-        var statusBg = statusPanelGO.AddComponent<Image>();
-        statusBg.color = new Color(0, 0, 0, 0.1f);
+        var colors = button.colors;
+        colors.normalColor = new Color(0, 0, 0, 0.3f);
+        colors.highlightedColor = new Color(0, 0, 0, 0.5f);
+        colors.pressedColor = new Color(0, 0, 0, 0.7f);
+        button.colors = colors;
+        
+        var labelText = CreateTextMeshPro(buttonGO.transform, label, _smallFontSize, TextAlignmentOptions.Left);
+        labelText.color = _textSecondary;
+        var labelRect = labelText.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = new Vector2(10, 0);
+        labelRect.offsetMax = new Vector2(-10, 0);
+        
+        return button;
     }
     
-    private Button CreateModernButton(string label, Vector2 position, Vector2 size, Color color)
+    private Button CreateMasterButton(Transform parent, string label, Vector2 position, Vector2 size, Color color)
     {
         var buttonGO = new GameObject(label + "Button");
-        buttonGO.transform.SetParent(_controlPanel);
+        buttonGO.transform.SetParent(parent);
         var rect = buttonGO.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(0, 1);
@@ -509,14 +568,13 @@ public class ModernGameUI : MonoBehaviour
         var img = buttonGO.AddComponent<Image>();
         img.color = color;
         
-        // Add hover effect
         var colors = button.colors;
         colors.normalColor = color;
         colors.highlightedColor = new Color(color.r * 1.2f, color.g * 1.2f, color.b * 1.2f, color.a);
         colors.pressedColor = new Color(color.r * 0.8f, color.g * 0.8f, color.b * 0.8f, color.a);
         button.colors = colors;
         
-        var labelText = CreateTextMeshPro(buttonGO.transform, label, 14, TextAlignmentOptions.Center);
+        var labelText = CreateTextMeshPro(buttonGO.transform, label, _bodyFontSize, TextAlignmentOptions.Center);
         labelText.color = Color.white;
         var labelRect = labelText.GetComponent<RectTransform>();
         labelRect.anchorMin = Vector2.zero;
@@ -527,10 +585,10 @@ public class ModernGameUI : MonoBehaviour
         return button;
     }
     
-    private TMP_InputField CreateModernInputField(string placeholder, Vector2 position, Vector2 size)
+    private TMP_InputField CreateMasterInputField(Transform parent, string placeholder, Vector2 position, Vector2 size)
     {
         var inputGO = new GameObject("InputField");
-        inputGO.transform.SetParent(_controlPanel);
+        inputGO.transform.SetParent(parent);
         var rect = inputGO.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(0, 1);
@@ -549,8 +607,8 @@ public class ModernGameUI : MonoBehaviour
         var textAreaRect = textAreaGO.AddComponent<RectTransform>();
         textAreaRect.anchorMin = Vector2.zero;
         textAreaRect.anchorMax = Vector2.one;
-        textAreaRect.offsetMin = new Vector2(10, 5);
-        textAreaRect.offsetMax = new Vector2(-10, -5);
+        textAreaRect.offsetMin = new Vector2(12, 8);
+        textAreaRect.offsetMax = new Vector2(-12, -8);
         textAreaGO.AddComponent<Mask>();
         
         var textGO = new GameObject("Text");
@@ -561,8 +619,8 @@ public class ModernGameUI : MonoBehaviour
         textRect.offsetMin = Vector2.zero;
         textRect.offsetMax = Vector2.zero;
         var text = textGO.AddComponent<TextMeshProUGUI>();
-        text.color = _textColor;
-        text.fontSize = 14;
+        text.color = _textPrimary;
+        text.fontSize = _bodyFontSize;
         text.alignment = TextAlignmentOptions.Left;
         input.textComponent = text;
         
@@ -576,8 +634,8 @@ public class ModernGameUI : MonoBehaviour
         placeholderRect.offsetMax = Vector2.zero;
         var placeholderText = placeholderGO.AddComponent<TextMeshProUGUI>();
         placeholderText.text = placeholder;
-        placeholderText.color = _textSecondaryColor;
-        placeholderText.fontSize = 14;
+        placeholderText.color = _textMuted;
+        placeholderText.fontSize = _bodyFontSize;
         placeholderText.alignment = TextAlignmentOptions.Left;
         input.placeholder = placeholderText;
         
@@ -598,23 +656,14 @@ public class ModernGameUI : MonoBehaviour
         tmp.text = text;
         tmp.fontSize = fontSize;
         tmp.alignment = alignment;
-        tmp.color = _textColor;
+        tmp.color = _textPrimary;
         
         return tmp;
     }
     
-    private void ApplyModernStyling()
+    private void ApplyMasterStyling()
     {
-        // Apply rounded corners and shadows to all panels
-        ApplyRoundedCorners(_mainPanelBackground, _borderRadius);
-        ApplyRoundedCorners(_controlPanelBackground, _borderRadius);
-        ApplyRoundedCorners(_logPanelBackground, _borderRadius);
-    }
-    
-    private void ApplyRoundedCorners(Image image, float radius)
-    {
-        // Note: Unity doesn't have built-in rounded corners, but we can simulate with proper colors and shadows
-        // In a real implementation, you might want to use a custom shader or UI asset
+        // Apply consistent styling across all elements
     }
     
     private void SetupEventHandlers()
@@ -631,12 +680,6 @@ public class ModernGameUI : MonoBehaviour
         _candNextButton.onClick.AddListener(() => OnCandidateChanged(1));
         _useSuggestedDcToggle.onValueChanged.AddListener(OnUseSuggestedDcChanged);
         _dcSlider.onValueChanged.AddListener(OnDCChanged);
-        
-        for (int i = 0; i < 4; i++)
-        {
-            int index = i; // Capture for closure
-            _nudgeButtons[i].onClick.AddListener(() => OnNudgeClicked(index));
-        }
     }
     
     private void UpdateConnectionStatus()
@@ -644,7 +687,7 @@ public class ModernGameUI : MonoBehaviour
         var brainClient = GetComponent<BrainClient>();
         bool isConnected = brainClient != null && brainClient.IsConnected;
         
-        _connectionStatus.text = isConnected ? "GW: Connected" : "GW: Offline";
+        _connectionStatus.text = isConnected ? "Connected" : "Offline";
         _connectionStatus.color = isConnected ? _successColor : _errorColor;
         
         var bg = _connectionStatus.transform.parent.GetComponent<Image>();
@@ -660,8 +703,30 @@ public class ModernGameUI : MonoBehaviour
     {
         _dcValueText.text = $"DC: {_dcSlider.value}";
         _autoButton.GetComponentInChildren<TextMeshProUGUI>().text = _isAutoMode ? "Auto: ON" : "Auto: OFF";
-        _autoButton.GetComponent<Image>().color = _isAutoMode ? _successColor : _secondaryColor;
+        _autoButton.GetComponent<Image>().color = _isAutoMode ? _successColor : _secondaryBackground;
         _actorButton.GetComponentInChildren<TextMeshProUGUI>().text = $"Actor: {_actors[_actorIndex]}";
+    }
+    
+    private void ToggleLog()
+    {
+        _logCollapsed = !_logCollapsed;
+        var logContent = _logPanel.Find("LogContent");
+        if (logContent != null)
+        {
+            logContent.gameObject.SetActive(!_logCollapsed);
+        }
+        _logToggleButton.GetComponentInChildren<TextMeshProUGUI>().text = _logCollapsed ? "▶ Log" : "▼ Log";
+    }
+    
+    private void ToggleControls()
+    {
+        _controlsCollapsed = !_controlsCollapsed;
+        var controlsContent = _controlPanel.Find("ControlsContent");
+        if (controlsContent != null)
+        {
+            controlsContent.gameObject.SetActive(!_controlsCollapsed);
+        }
+        _controlsToggleButton.GetComponentInChildren<TextMeshProUGUI>().text = _controlsCollapsed ? "▶ Controls" : "▼ Controls";
     }
     
     // Event Handlers
@@ -675,7 +740,6 @@ public class ModernGameUI : MonoBehaviour
         var diceGate = GetComponent<DiceGate>();
         if (diceGate != null && !string.IsNullOrEmpty(_situationInput.text))
         {
-            // Create a simple proposal based on the situation input
             var proposal = new IntentProposal
             {
                 type = "IntentProposal",
@@ -712,7 +776,6 @@ public class ModernGameUI : MonoBehaviour
             var saveLoadManager = FindObjectOfType<SaveLoadManager>();
             if (saveLoadManager != null)
             {
-                // Add the result note to DM narration
                 DMNarration.SetLastNote(_actors[_actorIndex], _resultInput.text);
                 AppendLog($"[DM] Saved result note for {_actors[_actorIndex]}: {_resultInput.text}");
                 _resultInput.text = "";
@@ -725,7 +788,6 @@ public class ModernGameUI : MonoBehaviour
         var brainClient = GetComponent<BrainClient>();
         if (brainClient != null && !string.IsNullOrEmpty(_situationInput.text))
         {
-            // Send the situation to the gateway
             brainClient.SendDMContext(_actors[_actorIndex], _situationInput.text);
             AppendLog($"[DM] Sent context to gateway: {_situationInput.text}");
         }
@@ -784,36 +846,12 @@ public class ModernGameUI : MonoBehaviour
         UpdateUI();
     }
     
-    private void OnNudgeClicked(int direction)
-    {
-        var planner = GetComponent<Planner>();
-        if (planner != null)
-        {
-            var agent = planner.ResolveAgentFor(_actors[_actorIndex]);
-            if (agent != null)
-            {
-                Vector3 offset = Vector3.zero;
-                switch (direction)
-                {
-                    case 0: offset = Vector3.forward; break;  // Up
-                    case 1: offset = Vector3.back; break;     // Down
-                    case 2: offset = Vector3.left; break;     // Left
-                    case 3: offset = Vector3.right; break;    // Right
-                }
-                
-                agent.position += offset;
-                AppendLog($"[DM] Nudged {_actors[_actorIndex]} {offset}");
-            }
-        }
-    }
-    
     public void AppendLog(string line)
     {
         if (_logText != null)
         {
             _logText.text += (string.IsNullOrEmpty(_logText.text) ? "" : "\n") + line;
             
-            // Auto-scroll to bottom
             var scrollRect = _logText.GetComponentInParent<ScrollRect>();
             if (scrollRect != null)
             {
