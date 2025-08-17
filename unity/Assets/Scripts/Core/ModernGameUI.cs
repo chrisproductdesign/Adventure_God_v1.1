@@ -55,6 +55,20 @@ public class ModernGameUI : MonoBehaviour
     [SerializeField] private Color _inputBackground = new Color(0.08f, 0.1f, 0.14f, 0.9f);
     [SerializeField] private Color _buttonHover = new Color(0.15f, 0.17f, 0.21f, 0.95f);
     
+    // Enhanced button colors
+    [SerializeField] private Color _buttonPrimary = new Color(0.15f, 0.17f, 0.21f, 0.95f);
+    [SerializeField] private Color _buttonPrimaryHover = new Color(0.18f, 0.20f, 0.24f, 0.95f);
+    [SerializeField] private Color _buttonPrimaryPressed = new Color(0.12f, 0.14f, 0.18f, 0.95f);
+    [SerializeField] private Color _buttonAccent = new Color(0.2f, 0.6f, 1f, 1f);
+    [SerializeField] private Color _buttonAccentHover = new Color(0.25f, 0.65f, 1f, 1f);
+    [SerializeField] private Color _buttonAccentPressed = new Color(0.15f, 0.55f, 0.9f, 1f);
+    [SerializeField] private Color _buttonSuccess = new Color(0.2f, 0.8f, 0.4f, 1f);
+    [SerializeField] private Color _buttonSuccessHover = new Color(0.25f, 0.85f, 0.45f, 1f);
+    [SerializeField] private Color _buttonSuccessPressed = new Color(0.15f, 0.75f, 0.35f, 1f);
+    [SerializeField] private Color _buttonWarning = new Color(1f, 0.7f, 0.2f, 1f);
+    [SerializeField] private Color _buttonWarningHover = new Color(1f, 0.75f, 0.25f, 1f);
+    [SerializeField] private Color _buttonWarningPressed = new Color(0.9f, 0.65f, 0.15f, 1f);
+    
     [Header("Typography & Spacing")]
     [SerializeField] private int _titleFontSize = 20;
     [SerializeField] private int _bodyFontSize = 16;
@@ -537,22 +551,85 @@ public class ModernGameUI : MonoBehaviour
         rect.sizeDelta = size;
         
         var button = buttonGO.AddComponent<Button>();
-        var img = buttonGO.AddComponent<Image>();
-        img.color = color;
         
+        // Create beautiful background with gradient effect
+        var bgGO = new GameObject("Background");
+        bgGO.transform.SetParent(buttonGO.transform);
+        var bgRect = bgGO.AddComponent<RectTransform>();
+        bgRect.anchorMin = Vector2.zero;
+        bgRect.anchorMax = Vector2.one;
+        bgRect.offsetMin = Vector2.zero;
+        bgRect.offsetMax = Vector2.zero;
+        var bgImg = bgGO.AddComponent<Image>();
+        
+        // Add subtle shadow for depth
+        var shadow = bgGO.AddComponent<Shadow>();
+        shadow.effectColor = new Color(0, 0, 0, 0.3f);
+        shadow.effectDistance = new Vector2(0, -2);
+        
+        // Determine button type and set colors
+        Color normalColor, hoverColor, pressedColor;
+        if (color == _accentColor)
+        {
+            normalColor = _buttonAccent;
+            hoverColor = _buttonAccentHover;
+            pressedColor = _buttonAccentPressed;
+        }
+        else if (color == _successColor)
+        {
+            normalColor = _buttonSuccess;
+            hoverColor = _buttonSuccessHover;
+            pressedColor = _buttonSuccessPressed;
+        }
+        else if (color == _warningColor)
+        {
+            normalColor = _buttonWarning;
+            hoverColor = _buttonWarningHover;
+            pressedColor = _buttonWarningPressed;
+        }
+        else
+        {
+            normalColor = _buttonPrimary;
+            hoverColor = _buttonPrimaryHover;
+            pressedColor = _buttonPrimaryPressed;
+        }
+        
+        bgImg.color = normalColor;
+        button.targetGraphic = bgImg;
+        
+        // Set up button colors
         var colors = button.colors;
-        colors.normalColor = color;
-        colors.highlightedColor = new Color(color.r * 1.15f, color.g * 1.15f, color.b * 1.15f, color.a);
-        colors.pressedColor = new Color(color.r * 0.85f, color.g * 0.85f, color.b * 0.85f, color.a);
+        colors.normalColor = normalColor;
+        colors.highlightedColor = hoverColor;
+        colors.pressedColor = pressedColor;
+        colors.selectedColor = hoverColor;
+        colors.fadeDuration = 0.1f;
         button.colors = colors;
         
+        // Create beautiful label with better typography
         var labelText = CreateBeautifulText(buttonGO.transform, label, _bodyFontSize, TextAlignmentOptions.Center);
         labelText.color = Color.white;
+        labelText.fontStyle = FontStyles.Bold;
+        
         var labelRect = labelText.GetComponent<RectTransform>();
         labelRect.anchorMin = Vector2.zero;
         labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = Vector2.zero;
-        labelRect.offsetMax = Vector2.zero;
+        labelRect.offsetMin = new Vector2(8, 4);
+        labelRect.offsetMax = new Vector2(-8, -4);
+        
+        // Add subtle inner glow effect
+        var glowGO = new GameObject("Glow");
+        glowGO.transform.SetParent(buttonGO.transform);
+        var glowRect = glowGO.AddComponent<RectTransform>();
+        glowRect.anchorMin = Vector2.zero;
+        glowRect.anchorMax = Vector2.one;
+        glowRect.offsetMin = new Vector2(2, 2);
+        glowRect.offsetMax = new Vector2(-2, -2);
+        var glowImg = glowGO.AddComponent<Image>();
+        glowImg.color = new Color(1f, 1f, 1f, 0.1f);
+        
+        // Ensure glow is behind the background
+        glowGO.transform.SetAsFirstSibling();
         
         return button;
     }
@@ -674,9 +751,56 @@ public class ModernGameUI : MonoBehaviour
     private void UpdateUI()
     {
         _dcValueText.text = $"DC: {_dcSlider.value}";
-        _autoButton.GetComponentInChildren<TextMeshProUGUI>().text = _isAutoMode ? "Auto: ON" : "Auto: OFF";
-        _autoButton.GetComponent<Image>().color = _isAutoMode ? _successColor : _secondaryBackground;
-        _actorButton.GetComponentInChildren<TextMeshProUGUI>().text = $"Actor: {_actors[_actorIndex]}";
+        
+        // Update auto button with proper visual feedback
+        var autoButtonText = _autoButton.GetComponentInChildren<TextMeshProUGUI>();
+        if (autoButtonText != null)
+        {
+            autoButtonText.text = _isAutoMode ? "Auto: ON" : "Auto: OFF";
+        }
+        
+        // Update auto button color based on state
+        var autoButtonImage = _autoButton.GetComponent<Image>();
+        if (autoButtonImage != null)
+        {
+            if (_isAutoMode)
+            {
+                autoButtonImage.color = _buttonSuccess;
+                // Update button colors for active state
+                var colors = _autoButton.colors;
+                colors.normalColor = _buttonSuccess;
+                colors.highlightedColor = _buttonSuccessHover;
+                colors.pressedColor = _buttonSuccessPressed;
+                _autoButton.colors = colors;
+            }
+            else
+            {
+                autoButtonImage.color = _buttonPrimary;
+                // Update button colors for inactive state
+                var colors = _autoButton.colors;
+                colors.normalColor = _buttonPrimary;
+                colors.highlightedColor = _buttonPrimaryHover;
+                colors.pressedColor = _buttonPrimaryPressed;
+                _autoButton.colors = colors;
+            }
+        }
+        
+        // Update actor button text
+        var actorButtonText = _actorButton.GetComponentInChildren<TextMeshProUGUI>();
+        if (actorButtonText != null)
+        {
+            actorButtonText.text = $"Actor: {_actors[_actorIndex]}";
+        }
+        
+        // Log auto mode changes
+        if (_isAutoMode)
+        {
+            AppendLog("[UI] Auto mode enabled");
+        }
+        else
+        {
+            AppendLog("[UI] Auto mode disabled");
+        }
     }
     
     // Event Handlers
@@ -716,7 +840,39 @@ public class ModernGameUI : MonoBehaviour
     private void OnAutoClicked()
     {
         _isAutoMode = !_isAutoMode;
+        
+        // Provide immediate visual feedback
+        var autoButtonText = _autoButton.GetComponentInChildren<TextMeshProUGUI>();
+        if (autoButtonText != null)
+        {
+            autoButtonText.text = _isAutoMode ? "Auto: ON" : "Auto: OFF";
+        }
+        
+        // Update button appearance immediately
+        var autoButtonImage = _autoButton.GetComponent<Image>();
+        if (autoButtonImage != null)
+        {
+            if (_isAutoMode)
+            {
+                autoButtonImage.color = _buttonSuccess;
+                AppendLog("[UI] Auto mode ENABLED - AI will act automatically");
+            }
+            else
+            {
+                autoButtonImage.color = _buttonPrimary;
+                AppendLog("[UI] Auto mode DISABLED - Manual control only");
+            }
+        }
+        
+        // Update the full UI
         UpdateUI();
+        
+        // Additional auto mode logic can be added here
+        if (_isAutoMode)
+        {
+            // Auto mode is enabled - could trigger automatic actions
+            AppendLog("[AUTO] Auto mode active - AI agents will act automatically");
+        }
     }
     
     private void OnSaveClicked()
