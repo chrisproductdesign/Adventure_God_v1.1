@@ -103,7 +103,6 @@ public class ModernGameUI : MonoBehaviour
     private void CreateBeautifulUI()
     {
         CreateMainCanvas();
-        CreateHeaderPanel();
         CreateContentPanel();
         CreateLogPanel();
         ApplyBeautifulStyling();
@@ -132,57 +131,6 @@ public class ModernGameUI : MonoBehaviour
         }
     }
     
-    private void CreateHeaderPanel()
-    {
-        var headerGO = new GameObject("HeaderPanel");
-        headerGO.transform.SetParent(_mainCanvas.transform);
-        _headerPanel = headerGO.AddComponent<RectTransform>();
-        
-        _headerPanel.anchorMin = new Vector2(0, 1);
-        _headerPanel.anchorMax = new Vector2(1, 1);
-        _headerPanel.pivot = new Vector2(0.5f, 1);
-        _headerPanel.anchoredPosition = Vector2.zero;
-        _headerPanel.sizeDelta = new Vector2(0, 80);
-        
-        var bg = headerGO.AddComponent<Image>();
-        bg.color = _primaryBackground;
-        
-        // Add beautiful shadow
-        var shadow = headerGO.AddComponent<Shadow>();
-        shadow.effectColor = new Color(0, 0, 0, 0.3f);
-        shadow.effectDistance = new Vector2(0, -6);
-        
-        // Title
-        var title = CreateBeautifulText(headerGO.transform, "DM Control Panel", _titleFontSize, TextAlignmentOptions.Left);
-        title.color = _textPrimary;
-        var titleRect = title.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0, 0);
-        titleRect.anchorMax = new Vector2(0.6f, 1);
-        titleRect.offsetMin = new Vector2(32, 0);
-        titleRect.offsetMax = new Vector2(-16, 0);
-        
-        // Connection Status
-        CreateConnectionStatus(headerGO.transform);
-    }
-    
-    private void CreateConnectionStatus(Transform parent)
-    {
-        var statusGO = new GameObject("ConnectionStatus");
-        statusGO.transform.SetParent(parent);
-        var rect = statusGO.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.6f, 0.5f);
-        rect.anchorMax = new Vector2(0.6f, 0.5f);
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.anchoredPosition = Vector2.zero;
-        rect.sizeDelta = new Vector2(160, 40);
-        
-        var bg = statusGO.AddComponent<Image>();
-        bg.color = new Color(0, 0.3f, 0, 0.2f);
-        
-        _connectionStatus = CreateBeautifulText(statusGO.transform, "Connected", _bodyFontSize, TextAlignmentOptions.Center);
-        _connectionStatus.color = _successColor;
-    }
-    
     private void CreateContentPanel()
     {
         var contentGO = new GameObject("ContentPanel");
@@ -192,8 +140,8 @@ public class ModernGameUI : MonoBehaviour
         _contentPanel.anchorMin = new Vector2(0, 1);
         _contentPanel.anchorMax = new Vector2(1, 1);
         _contentPanel.pivot = new Vector2(0.5f, 1);
-        _contentPanel.anchoredPosition = new Vector2(0, -80);
-        _contentPanel.sizeDelta = new Vector2(0, 240);
+        _contentPanel.anchoredPosition = Vector2.zero;
+        _contentPanel.sizeDelta = new Vector2(0, 320);
         
         var bg = contentGO.AddComponent<Image>();
         bg.color = _secondaryBackground;
@@ -208,11 +156,32 @@ public class ModernGameUI : MonoBehaviour
     
     private void CreateContentLayout(Transform parent)
     {
+        // Add compact connection status at the top
+        CreateConnectionStatus(parent);
+        
         // Left Column - Main Controls
         CreateLeftColumn(parent);
         
         // Right Column - Secondary Controls
         CreateRightColumn(parent);
+    }
+    
+    private void CreateConnectionStatus(Transform parent)
+    {
+        var statusGO = new GameObject("ConnectionStatus");
+        statusGO.transform.SetParent(parent);
+        var rect = statusGO.AddComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0, 1);
+        rect.anchorMax = new Vector2(0, 1);
+        rect.pivot = new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(24, -16);
+        rect.sizeDelta = new Vector2(120, 32);
+        
+        var bg = statusGO.AddComponent<Image>();
+        bg.color = new Color(0, 0.3f, 0, 0.2f);
+        
+        _connectionStatus = CreateBeautifulText(statusGO.transform, "Connected", _smallFontSize, TextAlignmentOptions.Center);
+        _connectionStatus.color = _successColor;
     }
     
     private void CreateLeftColumn(Transform parent)
