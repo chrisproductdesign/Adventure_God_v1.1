@@ -23,7 +23,7 @@ public static class RuntimeBootstrap
 		}
         host.AddComponent<DiceGate>();
         host.AddComponent<ModernGameUI>(); // Modern Apple-inspired UI
-		host.AddComponent<DMHud>();
+		// Removed DMHud to prevent overlapping UI panels
 
 		// Ensure three agents exist
 		var agent1 = GameObject.Find("Agent-1");

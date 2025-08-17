@@ -140,7 +140,7 @@ public class ModernGameUI : MonoBehaviour
         _mainPanel.anchorMax = new Vector2(1, 0);
         _mainPanel.pivot = new Vector2(0.5f, 0);
         _mainPanel.anchoredPosition = Vector2.zero;
-        _mainPanel.sizeDelta = new Vector2(0, 320);
+        _mainPanel.sizeDelta = new Vector2(0, 320); // Default maximized height
         
         var bg = mainGO.AddComponent<Image>();
         bg.color = _secondaryBackground;
@@ -148,15 +148,46 @@ public class ModernGameUI : MonoBehaviour
         // Add shadow for depth
         var shadow = mainGO.AddComponent<Shadow>();
         shadow.effectColor = new Color(0, 0, 0, 0.2f);
-        shadow.effectDistance = new Vector2(0, 4);
+        shadow.effectDistance = new Vector2(0, 4); // Shadow upwards
         
+        // Create header with minimize button at the top
+        CreatePanelHeader(mainGO.transform);
         CreatePanelContent(mainGO.transform);
-        CreateMinimizeButton(mainGO.transform);
+    }
+    
+    private void CreatePanelHeader(Transform parent)
+    {
+        // Create header area at the top of the panel
+        var headerGO = new GameObject("PanelHeader");
+        headerGO.transform.SetParent(parent);
+        var headerRect = headerGO.AddComponent<RectTransform>();
+        headerRect.anchorMin = new Vector2(0, 1);
+        headerRect.anchorMax = new Vector2(1, 1);
+        headerRect.pivot = new Vector2(0.5f, 1);
+        headerRect.anchoredPosition = Vector2.zero;
+        headerRect.sizeDelta = new Vector2(0, 40); // Header height
+        
+        // Header background
+        var headerBg = headerGO.AddComponent<Image>();
+        headerBg.color = new Color(0.08f, 0.1f, 0.14f, 0.95f);
+        
+        // Minimize button in top-right corner
+        CreateMinimizeButton(headerGO.transform);
+        
+        // Panel title in top-left
+        var titleText = CreateBeautifulText(headerGO.transform, "DM Control Panel", _smallFontSize, TextAlignmentOptions.Left);
+        titleText.color = _textSecondary;
+        var titleRect = titleText.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0, 0);
+        titleRect.anchorMax = new Vector2(1, 1);
+        titleRect.pivot = new Vector2(0, 0.5f);
+        titleRect.anchoredPosition = new Vector2(24, 0);
+        titleRect.sizeDelta = new Vector2(-80, 0); // Leave space for minimize button
     }
     
     private void CreatePanelContent(Transform parent)
     {
-        // Create content area (top portion)
+        // Create content area (below header)
         var contentGO = new GameObject("ContentArea");
         contentGO.transform.SetParent(parent);
         var contentRect = contentGO.AddComponent<RectTransform>();
@@ -453,11 +484,11 @@ public class ModernGameUI : MonoBehaviour
         var minimizeButtonGO = new GameObject("MinimizeButton");
         minimizeButtonGO.transform.SetParent(parent);
         var rect = minimizeButtonGO.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(1, 0);
-        rect.anchorMax = new Vector2(1, 0);
-        rect.pivot = new Vector2(1, 0);
-        rect.anchoredPosition = new Vector2(-24, -24);
-        rect.sizeDelta = new Vector2(48, 48);
+        rect.anchorMin = new Vector2(1, 0.5f);
+        rect.anchorMax = new Vector2(1, 0.5f);
+        rect.pivot = new Vector2(1, 0.5f);
+        rect.anchoredPosition = new Vector2(-16, 0);
+        rect.sizeDelta = new Vector2(32, 32);
         
         _minimizeButton = minimizeButtonGO.AddComponent<Button>();
         
