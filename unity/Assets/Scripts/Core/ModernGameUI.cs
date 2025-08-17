@@ -6,7 +6,7 @@ using TMPro;
 using System;
 
 /// <summary>
-/// Beautiful Game Director Console - Modern, Elegant, Professional
+/// Beautiful DM Control Panel - Modern, Elegant, Professional
 /// Designed with perfect UX/UI principles for maximum usability and visual appeal
 /// </summary>
 public class ModernGameUI : MonoBehaviour
@@ -153,7 +153,7 @@ public class ModernGameUI : MonoBehaviour
         shadow.effectDistance = new Vector2(0, -6);
         
         // Title
-        var title = CreateBeautifulText(headerGO.transform, "Game Director Console", _titleFontSize, TextAlignmentOptions.Left);
+        var title = CreateBeautifulText(headerGO.transform, "DM Control Panel", _titleFontSize, TextAlignmentOptions.Left);
         title.color = _textPrimary;
         var titleRect = title.GetComponent<RectTransform>();
         titleRect.anchorMin = new Vector2(0, 0);
